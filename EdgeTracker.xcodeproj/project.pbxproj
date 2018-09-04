@@ -13,10 +13,10 @@
 		37945194213DC8A300373D25 /* libopencv_highgui.3.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37945192213DC8A300373D25 /* libopencv_highgui.3.4.2.dylib */; };
 		3794519A213DCAEE00373D25 /* libopencv_imgcodecs.3.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37945199213DCAEE00373D25 /* libopencv_imgcodecs.3.4.2.dylib */; };
 		3794519E213DCD0900373D25 /* libopencv_imgproc.3.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3794519D213DCD0900373D25 /* libopencv_imgproc.3.4.2.dylib */; };
-		379451A3213DCE1200373D25 /* orange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3794519F213DCE1100373D25 /* orange.cpp */; };
-		379451A4213DCE1200373D25 /* models.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379451A1213DCE1100373D25 /* models.cpp */; };
-		379451A7213DCF3500373D25 /* lsq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379451A6213DCF3500373D25 /* lsq.cpp */; };
 		379451AA213DD11200373D25 /* asm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379451A8213DD11200373D25 /* asm.cpp */; };
+		37F89F29213F1DBC008F1E99 /* lsq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F89F25213F1DBC008F1E99 /* lsq.cpp */; };
+		37F89F2A213F1DBC008F1E99 /* models.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F89F26213F1DBC008F1E99 /* models.cpp */; };
+		37F89F2B213F1DBC008F1E99 /* orange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F89F27213F1DBC008F1E99 /* orange.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,14 +39,14 @@
 		37945192213DC8A300373D25 /* libopencv_highgui.3.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.3.4.2.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.2/lib/libopencv_highgui.3.4.2.dylib; sourceTree = "<group>"; };
 		37945199213DCAEE00373D25 /* libopencv_imgcodecs.3.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgcodecs.3.4.2.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.2/lib/libopencv_imgcodecs.3.4.2.dylib; sourceTree = "<group>"; };
 		3794519D213DCD0900373D25 /* libopencv_imgproc.3.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.3.4.2.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.2/lib/libopencv_imgproc.3.4.2.dylib; sourceTree = "<group>"; };
-		3794519F213DCE1100373D25 /* orange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = orange.cpp; path = ../../GeoHash/GeoHash/orange.cpp; sourceTree = "<group>"; };
-		379451A0213DCE1100373D25 /* orange.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = orange.hpp; path = ../../GeoHash/GeoHash/orange.hpp; sourceTree = "<group>"; };
-		379451A1213DCE1100373D25 /* models.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = models.cpp; path = ../../GeoHash/GeoHash/models.cpp; sourceTree = "<group>"; };
-		379451A2213DCE1100373D25 /* models.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = models.hpp; path = ../../GeoHash/GeoHash/models.hpp; sourceTree = "<group>"; };
-		379451A5213DCF3500373D25 /* lsq.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lsq.hpp; path = ../../GeoHash/GeoHash/lsq.hpp; sourceTree = "<group>"; };
-		379451A6213DCF3500373D25 /* lsq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lsq.cpp; path = ../../GeoHash/GeoHash/lsq.cpp; sourceTree = "<group>"; };
 		379451A8213DD11200373D25 /* asm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = asm.cpp; sourceTree = "<group>"; };
 		379451A9213DD11200373D25 /* asm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = asm.hpp; sourceTree = "<group>"; };
+		37F89F23213F1DBC008F1E99 /* models.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = models.hpp; sourceTree = "<group>"; };
+		37F89F24213F1DBC008F1E99 /* lsq.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lsq.hpp; sourceTree = "<group>"; };
+		37F89F25213F1DBC008F1E99 /* lsq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lsq.cpp; sourceTree = "<group>"; };
+		37F89F26213F1DBC008F1E99 /* models.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = models.cpp; sourceTree = "<group>"; };
+		37F89F27213F1DBC008F1E99 /* orange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = orange.cpp; sourceTree = "<group>"; };
+		37F89F28213F1DBC008F1E99 /* orange.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = orange.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,13 +91,13 @@
 			children = (
 				379451A8213DD11200373D25 /* asm.cpp */,
 				379451A9213DD11200373D25 /* asm.hpp */,
-				379451A6213DCF3500373D25 /* lsq.cpp */,
-				379451A5213DCF3500373D25 /* lsq.hpp */,
+				37F89F25213F1DBC008F1E99 /* lsq.cpp */,
+				37F89F24213F1DBC008F1E99 /* lsq.hpp */,
 				3794518A213DC85700373D25 /* main.cpp */,
-				379451A1213DCE1100373D25 /* models.cpp */,
-				379451A2213DCE1100373D25 /* models.hpp */,
-				3794519F213DCE1100373D25 /* orange.cpp */,
-				379451A0213DCE1100373D25 /* orange.hpp */,
+				37F89F26213F1DBC008F1E99 /* models.cpp */,
+				37F89F23213F1DBC008F1E99 /* models.hpp */,
+				37F89F27213F1DBC008F1E99 /* orange.cpp */,
+				37F89F28213F1DBC008F1E99 /* orange.hpp */,
 			);
 			path = EdgeTracker;
 			sourceTree = "<group>";
@@ -158,11 +158,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				379451A7213DCF3500373D25 /* lsq.cpp in Sources */,
+				37F89F29213F1DBC008F1E99 /* lsq.cpp in Sources */,
 				3794518B213DC85700373D25 /* main.cpp in Sources */,
-				379451A4213DCE1200373D25 /* models.cpp in Sources */,
 				379451AA213DD11200373D25 /* asm.cpp in Sources */,
-				379451A3213DCE1200373D25 /* orange.cpp in Sources */,
+				37F89F2A213F1DBC008F1E99 /* models.cpp in Sources */,
+				37F89F2B213F1DBC008F1E99 /* orange.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
