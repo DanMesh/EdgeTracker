@@ -72,7 +72,7 @@ vector<Whisker> ASM::projectToWhiskers(Model * model, Vec6f pose, Mat K) {
     
     Mat modelMat = model->pointsToMat();
     
-    Mat proj = lsq::projection(pose, modelMat, K, lsq::ROT_XYZ);
+    Mat proj = lsq::projection(pose, modelMat, K);
     vector<bool> vis = model->visibilityMask(pose[3], pose[4]);
     
     vector<vector<int>> edges = model->getEdgeBasisList();

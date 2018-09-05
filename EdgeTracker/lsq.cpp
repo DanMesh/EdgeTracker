@@ -8,7 +8,7 @@
 
 #include "lsq.hpp"
 
-estimate lsq::poseEstimateLM(Vec6f pose1, Mat model, Mat target, Mat K, int maxIter, int rotOrder) {
+estimate lsq::poseEstimateLM(Vec6f pose1, Mat model, Mat target, Mat K, int maxIter) {
     // pose1: imitial pose parameters
     // model: model points in full homogeneous coords
     // target: image points, in 2D coords
@@ -18,12 +18,12 @@ estimate lsq::poseEstimateLM(Vec6f pose1, Mat model, Mat target, Mat K, int maxI
     
     if (maxIter == 0) maxIter = MAX_ITERATIONS;
     
-    Mat y = lsq::projection(pose1, model, K, rotOrder);
+    Mat y = lsq::projection(pose1, model, K);
     float E = lsq::projectionError(target, y);
     
     int iterations = 1;
     while (E > ERROR_THRESHOLD && iterations < maxIter) {
-        Mat J = lsq::jacobian(pose1, model, K, rotOrder);
+        Mat J = lsq::jacobian(pose1, model, K);
         Mat eps;
         subtract(y.rowRange(0, 2).t(), target, eps);
         eps = lsq::pointsAsCol(eps.t());
@@ -36,7 +36,7 @@ estimate lsq::poseEstimateLM(Vec6f pose1, Mat model, Mat target, Mat K, int maxI
             pose2[i] += del.at<float>(i);
         }
         
-        y = lsq::projection(pose2, model, K, rotOrder);
+        y = lsq::projection(pose2, model, K);
         E = lsq::projectionError(target, y);
         
         pose1 = pose2;
@@ -52,7 +52,7 @@ Mat lsq::translation(float x, float y, float z) {
     return Mat(3, 1, CV_32FC1, tmp) * 1;
 }
 
-Mat lsq::rotation(float x, float y, float z, int order) {
+Mat lsq::rotation(float x, float y, float z) {
     // Rotate about the x, y then z axes with the given angles in radians
     float rotX[3][3] = {
         { 1,       0,       0 },
@@ -74,13 +74,12 @@ Mat lsq::rotation(float x, float y, float z, int order) {
     Mat rY = Mat(3, 3, CV_32FC1, rotY);
     Mat rZ = Mat(3, 3, CV_32FC1, rotZ);
     
-    if (order == ROT_ZXY) return rY * rX * rZ;
-    else return rZ * rY * rX;
+    return rZ * rY * rX;
 }
 
-Mat lsq::projection(Vec6f pose, Mat model, Mat K, int rotOrder) {
+Mat lsq::projection(Vec6f pose, Mat model, Mat K) {
     Mat P;
-    hconcat( rotation(pose[3], pose[4], pose[5], rotOrder) , translation(pose[0], pose[1], pose[2]) , P);
+    hconcat( rotation(pose[3], pose[4], pose[5]) , translation(pose[0], pose[1], pose[2]) , P);
     Mat y = (K * P) * model;
     
     Mat z = y.row(2);
@@ -113,7 +112,7 @@ Mat lsq::pointsAsCol(Mat points) {
     return points;
 }
 
-Mat lsq::jacobian(Vec6f pose, Mat model, Mat K, int rotOrder) {
+Mat lsq::jacobian(Vec6f pose, Mat model, Mat K) {
     // Calculates the Jacobian for the given pose of model x
     Mat J = Mat(2*model.cols, 0, CV_32FC1);
     
@@ -126,7 +125,7 @@ Mat lsq::jacobian(Vec6f pose, Mat model, Mat K, int rotOrder) {
         p1[i] += delta[i];
         Vec6f p2 = pose;
         p2[i] -= delta[i];
-        Mat j = (projection(p1, model, K, rotOrder) - projection(p2, model, K, rotOrder))/delta[i];
+        Mat j = (projection(p1, model, K) - projection(p2, model, K))/delta[i];
         hconcat(J, pointsAsCol(j), J);
     }
     

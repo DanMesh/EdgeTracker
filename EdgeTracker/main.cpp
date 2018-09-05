@@ -156,10 +156,10 @@ int main(int argc, const char * argv[]) {
         
         Mat canny2;
         canny.copyTo(canny2);
-        model->draw(canny2, est.pose, K, Scalar(255, 255, 255), lsq::ROT_XYZ);
+        model->draw(canny2, est.pose, K, Scalar(255, 255, 255));
         imshow("Canny + Matched", canny2);
         
-        model->draw(frame, est.pose, K, model->colour, lsq::ROT_XYZ);
+        model->draw(frame, est.pose, K, model->colour);
         imshow("Frame", frame);
         
         // Get next frame

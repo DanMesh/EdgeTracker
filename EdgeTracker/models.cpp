@@ -94,8 +94,8 @@ void Box::createPoints(float w, float h, float d) {
     vertices = {p0, p1, p2, p3, p4, p5, p6, p7};
 }
 
-void Box::draw(Mat img, Vec6f pose, Mat K, Scalar colour, int rotOrder) {
-    Mat proj = lsq::projection(pose, pointsToMat(), K, rotOrder);
+void Box::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
+    Mat proj = lsq::projection(pose, pointsToMat(), K);
     
     // Create a list of points
     vector<Point> points;
@@ -145,8 +145,8 @@ void Rectangle::createPoints(float w, float h) {
     vertices = {p0, p1, p2, p3};
 }
 
-void Rectangle::draw(Mat img, Vec6f pose, Mat K, Scalar colour, int rotOrder) {
-    Mat proj = lsq::projection(pose, pointsToMat(), K, rotOrder);
+void Rectangle::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
+    Mat proj = lsq::projection(pose, pointsToMat(), K);
     
     // Create a list of points
     Point points[1][4];
@@ -182,8 +182,8 @@ vector<bool> Dog::visibilityMask(float xAngle, float yAngle) {
     return {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
 }
 
-void Dog::draw(Mat img, Vec6f pose, Mat K, Scalar colour, int rotOrder) {
-    Mat proj = lsq::projection(pose, pointsToMat(), K, rotOrder);
+void Dog::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
+    Mat proj = lsq::projection(pose, pointsToMat(), K);
     
     // Create a list of points
     Point points[1][15];
@@ -218,8 +218,8 @@ vector<bool> Arrow::visibilityMask(float xAngle, float yAngle) {
     return {true, true, true, true, true, true, true};
 }
 
-void Arrow::draw(Mat img, Vec6f pose, Mat K, Scalar colour, int rotOrder) {
-    Mat proj = lsq::projection(pose, pointsToMat(), K, rotOrder);
+void Arrow::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
+    Mat proj = lsq::projection(pose, pointsToMat(), K);
     
     // Create a list of points
     Point points[1][7];
