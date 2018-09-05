@@ -85,13 +85,18 @@ int main(int argc, const char * argv[]) {
     cout << est.iterations << endl;
     cout << est.error << endl << endl;
     
-    
+    waitKey(0);
     
     // * * * * * * * * * * * * * * * * *
     //   CAMERA LOOP
     // * * * * * * * * * * * * * * * * *
     
+    vector<double> times = {};
+    double longestTime = 0.0;
+    
     while (!frame.empty()) {
+        
+        auto start = chrono::system_clock::now();   // Start the timer
         
         imshow("Frame", frame);
         
@@ -146,20 +151,39 @@ int main(int argc, const char * argv[]) {
             iterations++;
             //waitKey(0);
         }
-        cout << "Did that " << iterations << " times" << endl;
-        cout << est.pose << endl << est.error << endl << endl;
+        //cout << "Did that " << iterations << " times" << endl;
+        //cout << est.pose << endl << est.error << endl << endl;
         
         Mat canny2;
         canny.copyTo(canny2);
         model->draw(canny2, est.pose, K, Scalar(255, 255, 255), lsq::ROT_XYZ);
         imshow("Canny + Matched", canny2);
         
+        model->draw(frame, est.pose, K, model->colour, lsq::ROT_XYZ);
+        imshow("Frame", frame);
+        
         // Get next frame
         cap.grab();
         cap >> frame;
         
-        if (waitKey(0) == 'q') break;
+        auto stop = chrono::system_clock::now();   // Stop the timer
+        
+        chrono::duration<double> frameTime = stop-start;
+        double time = frameTime.count()*1000.0;
+        cout << endl << "Frame Time = " << time << " ms" << endl << endl;
+        times.push_back(time);
+        if (time > longestTime) longestTime = time;
+        
+        if (waitKey(1) == 'q') break;
     }
+    
+    vector<double> meanTime, stdDevTime;
+    meanStdDev(times, meanTime, stdDevTime);
+    
+    cout << "No. frames   = " << times.size() << endl;
+    cout << "Avg time     = " << meanTime[0] << " ms     " << 1000.0/meanTime[0] << " fps" << endl;
+    cout << "stdDev time  = " << stdDevTime[0] << " ms" << endl;
+    cout << "Longest time = " << longestTime << " ms" << endl;
     
     return 0;
 }
