@@ -22,13 +22,14 @@ using namespace cv;
 
 class Whisker {
 public:
-    Whisker(Point c_in, Point n_in, Mat mp_in) : centre(c_in), normal(n_in), modelCentre(mp_in) {}
-    Point centre, normal;
+    Whisker(Point c_in, Point2f n_in, Mat mp_in) : centre(c_in), normal(n_in), modelCentre(mp_in) {}
+    Point centre;
+    Point2f normal;
     Mat modelCentre;
     Point closestEdgePoint(Mat edges, int maxDist = MAX_DIST);
 private:
-    static const int MAX_DIST = 100;
-    static constexpr double CROSS_EPS = 0.1;
+    static const int MAX_DIST = 50;
+    static constexpr double CROSS_EPS = 1;
 };
 
 
@@ -38,7 +39,7 @@ public:
     static double getArea(InputArray img);
     static vector<Whisker> projectToWhiskers(Model * model, Vec6f pose, Mat K);
 private:
-    static constexpr double WHISKER_SPACING = 20;
+    static constexpr double WHISKER_SPACING = 400;
 };
 
 #endif /* asm_hpp */

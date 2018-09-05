@@ -17,10 +17,9 @@ estimate lsq::poseEstimateLM(Vec6f pose1, Mat model, Mat target, Mat K, int maxI
     // rotOrder: order of rotations, default XYZ
     
     if (maxIter == 0) maxIter = MAX_ITERATIONS;
-    int numPoints = target.rows;
-        
+    
     Mat y = lsq::projection(pose1, model, K, rotOrder);
-    float E = lsq::projectionError(target, y) / numPoints;
+    float E = lsq::projectionError(target, y);
     
     int iterations = 1;
     while (E > ERROR_THRESHOLD && iterations < maxIter) {
@@ -38,7 +37,7 @@ estimate lsq::poseEstimateLM(Vec6f pose1, Mat model, Mat target, Mat K, int maxI
         }
         
         y = lsq::projection(pose2, model, K, rotOrder);
-        E = lsq::projectionError(target, y) / numPoints;
+        E = lsq::projectionError(target, y);
         
         pose1 = pose2;
         iterations++;
@@ -118,8 +117,8 @@ Mat lsq::jacobian(Vec6f pose, Mat model, Mat K, int rotOrder) {
     // Calculates the Jacobian for the given pose of model x
     Mat J = Mat(2*model.cols, 0, CV_32FC1);
     
-    float dt = 0.5;
-    float dr = CV_PI/360;
+    float dt = 1;
+    float dr = CV_PI/180;
     vector<float> delta = {dt, dt, dt, dr, dr, dr};
     
     for (int i = 0; i < 6; i++) {

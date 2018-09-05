@@ -84,11 +84,11 @@ vector<Whisker> ASM::projectToWhiskers(Model * model, Vec6f pose, Mat K) {
         Point p1 = Point(p1_mat.at<float>(0), p1_mat.at<float>(1));
         
         // Calculate the edge vector and length
-        Point edge = Point(p1.x-p0.x, p1.y-p0.y);
+        Point edge = p1 - p0;
         double length = sqrt(edge.dot(edge));
         
         // Calculate a unit normal and the side length
-        Point normal = Point(edge.y, -edge.x);
+        Point2f normal = Point2f(edge.y, -edge.x);
         normal /= length;
         
         // Divide up the edge

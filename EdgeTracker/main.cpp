@@ -107,30 +107,44 @@ int main(int argc, const char * argv[]) {
         findNonZero(canny, edges);
         
         int iterations = 1;
-        double error = lsq::ERROR_THRESHOLD + 1;
+        double error = est.error;
         while (error > lsq::ERROR_THRESHOLD && iterations < 20) {
             // Generate a set of whiskers
-            vector<Whisker> whiskers = ASM::projectToWhiskers(model, pose, K);
+            vector<Whisker> whiskers = ASM::projectToWhiskers(model, est.pose, K);
+            
+            Mat cannyTest;
+            canny.copyTo(cannyTest);
             
             // Sample along the model edges and find the edges that intersect each whisker
             Mat targetPoints = Mat(whiskers[0].closestEdgePoint(edges));
             Mat whiskerModel = whiskers[0].modelCentre;
             for (int w = 1; w < whiskers.size(); w++) {
                 Point closestEdge = whiskers[w].closestEdgePoint(edges);
-                if (closestEdge == Point(-1,-1)) continue;  // Don't use points with nothing close enough
+                if (closestEdge == Point(-1,-1)) continue;
                 hconcat(whiskerModel, whiskers[w].modelCentre, whiskerModel);
                 hconcat(targetPoints, Mat(closestEdge), targetPoints);
+                
+                //TRACE:
+                circle(cannyTest, closestEdge, 3, Scalar(120));
+                circle(cannyTest, whiskers[w].centre, 3, Scalar(255));
+                line(cannyTest, closestEdge, whiskers[w].centre, Scalar(150));
             }
+            imshow("CannyTest", cannyTest);
             
             targetPoints.convertTo(targetPoints, CV_32FC1);
             
             // Use least squares to match the sampled edges to each other
-            est = lsq::poseEstimateLM(pose, whiskerModel, targetPoints.t(), K, 40);
+            est = lsq::poseEstimateLM(est.pose, whiskerModel, targetPoints.t(), K, 2);
             
-            iterations++;
+            
             double improvement = (error - est.error)/error;
             error = est.error;
-            if (improvement < 0.01) break;  // Stop trying if you reduce the error by < 1%
+            
+            // Stop trying if you reduce the error by < 1% (excl. the first one)
+            if (improvement < 0.01 && iterations > 1) break;
+            
+            iterations++;
+            //waitKey(0);
         }
         cout << "Did that " << iterations << " times" << endl;
         cout << est.pose << endl << est.error << endl << endl;
@@ -138,7 +152,6 @@ int main(int argc, const char * argv[]) {
         Mat canny2;
         canny.copyTo(canny2);
         model->draw(canny2, est.pose, K, Scalar(255, 255, 255), lsq::ROT_XYZ);
-        imshow("Canny", canny);
         imshow("Canny + Matched", canny2);
         
         // Get next frame
