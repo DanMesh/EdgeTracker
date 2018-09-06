@@ -13,6 +13,7 @@
 #include <opencv2/videoio/videoio.hpp>
 
 #include "asm.hpp"
+#include "lsq.hpp"
 #include "models.hpp"
 #include "orange.hpp"
 
@@ -85,8 +86,6 @@ int main(int argc, const char * argv[]) {
     cout << est.iterations << endl;
     cout << est.error << endl << endl;
     
-    waitKey(0);
-    
     // * * * * * * * * * * * * * * * * *
     //   CAMERA LOOP
     // * * * * * * * * * * * * * * * * *
@@ -112,7 +111,7 @@ int main(int argc, const char * argv[]) {
         findNonZero(canny, edges);
         
         int iterations = 1;
-        double error = est.error;
+        double error = lsq::ERROR_THRESHOLD + 1;
         while (error > lsq::ERROR_THRESHOLD && iterations < 20) {
             // Generate a set of whiskers
             vector<Whisker> whiskers = ASM::projectToWhiskers(model, est.pose, K);
@@ -121,9 +120,9 @@ int main(int argc, const char * argv[]) {
             canny.copyTo(cannyTest);
             
             // Sample along the model edges and find the edges that intersect each whisker
-            Mat targetPoints = Mat(whiskers[0].closestEdgePoint(edges));
-            Mat whiskerModel = whiskers[0].modelCentre;
-            for (int w = 1; w < whiskers.size(); w++) {
+            Mat targetPoints = Mat(2, 0, CV_32S);
+            Mat whiskerModel = Mat(4, 0, CV_32FC1);
+            for (int w = 0; w < whiskers.size(); w++) {
                 Point closestEdge = whiskers[w].closestEdgePoint(edges);
                 if (closestEdge == Point(-1,-1)) continue;
                 hconcat(whiskerModel, whiskers[w].modelCentre, whiskerModel);
@@ -151,8 +150,15 @@ int main(int argc, const char * argv[]) {
             iterations++;
             //waitKey(0);
         }
-        //cout << "Did that " << iterations << " times" << endl;
-        //cout << est.pose << endl << est.error << endl << endl;
+        cout << "Iterations = " << iterations << endl;
+        
+        // Stop timer and show time
+        auto stop = chrono::system_clock::now();
+        chrono::duration<double> frameTime = stop-start;
+        double time = frameTime.count()*1000.0;
+        cout << "Frame Time = " << time << " ms" << endl << endl;
+        times.push_back(time);
+        if (time > longestTime) longestTime = time;
         
         Mat canny2;
         canny.copyTo(canny2);
@@ -165,14 +171,6 @@ int main(int argc, const char * argv[]) {
         // Get next frame
         cap.grab();
         cap >> frame;
-        
-        auto stop = chrono::system_clock::now();   // Stop the timer
-        
-        chrono::duration<double> frameTime = stop-start;
-        double time = frameTime.count()*1000.0;
-        cout << endl << "Frame Time = " << time << " ms" << endl << endl;
-        times.push_back(time);
-        if (time > longestTime) longestTime = time;
         
         if (waitKey(1) == 'q') break;
     }

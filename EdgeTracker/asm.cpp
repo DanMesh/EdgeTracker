@@ -72,38 +72,46 @@ vector<Whisker> ASM::projectToWhiskers(Model * model, Vec6f pose, Mat K) {
     
     Mat modelMat = model->pointsToMat();
     
-    Mat proj = lsq::projection(pose, modelMat, K);
     vector<bool> vis = model->visibilityMask(pose[3], pose[4]);
     
     vector<vector<int>> edges = model->getEdgeBasisList();
-    for (int i = 0; i < edges.size(); i++) {
+    
+    for (int i = 0; i < edges.size()/2; i++) {
         if (!vis[edges[i][0]] || !vis[edges[i][1]]) continue;
-        Mat p0_mat = proj.col(edges[i][0]);
-        Mat p1_mat = proj.col(edges[i][1]);
-        Point p0 = Point(p0_mat.at<float>(0), p0_mat.at<float>(1));
-        Point p1 = Point(p1_mat.at<float>(0), p1_mat.at<float>(1));
+        
+        // Get the edge endpoints
+        Mat p0 = modelMat.col(edges[i][0]);
+        Mat p1 = modelMat.col(edges[i][1]);
         
         // Calculate the edge vector and length
-        Point edge = p1 - p0;
+        Mat edge = p1 - p0;
         double length = sqrt(edge.dot(edge));
-        
-        // Calculate a unit normal and the side length
-        Point2f normal = Point2f(edge.y, -edge.x);
-        normal /= length;
         
         // Divide up the edge
         int numWhiskers = MAX(1, ceil(length/WHISKER_SPACING - 0.5));
         double offset = 0.5 * (length - (numWhiskers-1) * WHISKER_SPACING);
         
-        // Do the same for the model points
-        Mat m0_mat = modelMat.col(edges[i][0]);
-        Mat m1_mat = modelMat.col(edges[i][1]);
+        Mat centres;
+        hconcat(p0, p1, centres);
         
         for (int w = 0; w < numWhiskers; w++) {
-            double distance = offset + w * WHISKER_SPACING;
-            Point centre = p0 + edge * (distance/length);
-            Mat centre_mat = m0_mat + (m1_mat - m0_mat) * (distance/length);
-            whiskers.push_back(Whisker(centre, normal, centre_mat));
+            Mat centrePt = p0 + edge * ((offset + w * WHISKER_SPACING)/length);
+            hconcat(centres, centrePt, centres);
+        }
+        
+        // Find the projections of the whisker centres
+        Mat proj = lsq::projection(pose, centres, K);
+        
+        // Calculate the length and normal of the edge
+        edge = proj.col(1) - proj.col(0);
+        length = sqrt(edge.dot(edge));
+        Point2f normal = Point2f(edge.at<float>(1), -edge.at<float>(0));
+        normal /= length;
+        
+        for (int w = 0; w < numWhiskers; w++) {
+            Point centre = Point(proj.col(2+w).at<float>(0), proj.col(2+w).at<float>(1));
+            Mat modelCentre = centres.col(2+w);
+            whiskers.push_back(Whisker(centre, normal, modelCentre));
         }
     }
     
