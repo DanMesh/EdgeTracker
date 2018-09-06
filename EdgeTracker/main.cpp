@@ -23,6 +23,12 @@
 using namespace std;
 using namespace cv;
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+//      Methods
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+void mouseHandler(int event, int x, int y, int flags, void* param);
+void addMouseHandler(cv::String window);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 //      Constants
@@ -43,6 +49,20 @@ static float arrowInit[2][7] = {
 };
 static Mat arrowTargetInit = Mat(2,7, CV_32FC1, arrowInit);
 
+// The initial Dog endpoints in Trio_Vid.avi
+static float dogInit[2][15] = {
+    {169, 342, 379, 348, 410, 477, 511, 415, 420, 509, 111, 127, 254, 270, 158},
+    {194, 184, 162, 130, 114, 157, 155, 218, 366, 388, 419, 362, 348, 229, 233}
+};
+static Mat dogTargetInit = Mat(2,15, CV_32FC1, dogInit);
+
+// The initial Rectangle endpoints in Trio_Vid.avi
+static float rectangleInit[2][4] = {
+    {549, 692, 864, 714},
+    {120,  69, 175, 247}
+};
+static Mat rectangleTargetInit = Mat(2,4, CV_32FC1, rectangleInit);
+
 static string dataFolder = "../../../../../data/";
 
 
@@ -59,11 +79,13 @@ int main(int argc, const char * argv[]) {
     // * * * * * * * * * * * * * * * * *
     
     //Model * model = new Rectangle(60, 80, Scalar(20, 65, 165));
-    //Model * model = new Dog(Scalar(19, 89, 64));
-    Model * model = new Arrow(Scalar(108, 79, 28));
+    Model * model = new Dog(Scalar(19, 89, 64));
+    //Model * model = new Arrow(Scalar(108, 79, 28));
     
     Mat modelMat = model->pointsToMat();
     vector<Point3f> modelPoints = model->getVertices();
+    
+    Mat target = dogTargetInit;
     
     // * * * * * * * * * * * * * * * * *
     //   OPEN THE FIRST FRAME
@@ -75,12 +97,14 @@ int main(int argc, const char * argv[]) {
     if(!cap.isOpened()) return -1;
     
     cap >> frame;
-    imshow(filename, frame);
-   
+    imshow("Frame", frame);
+    
+    // Pause to allow annotation
+    // addMouseHandler("Frame"); waitKey(0);
     
     // Build an initial pose estimate based on previously measured points
-    Vec6f pose = {0, 0, 300, 0, 0, 0};
-    estimate est = lsq::poseEstimateLM(pose, modelMat, arrowTargetInit.t(), K);
+    Vec6f pose = {0, 0, 300, -CV_PI/4, 0, 0};
+    estimate est = lsq::poseEstimateLM(pose, modelMat, target.t(), K);
     pose = est.pose;
     cout << pose << endl;
     cout << est.iterations << endl;
@@ -178,4 +202,22 @@ int main(int argc, const char * argv[]) {
     cout << "Longest time = " << longestTime << " ms     " << 1000.0/longestTime << " fps" << endl;
     
     return 0;
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+//      Method Implementations
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+void mouseHandler(int event, int x, int y, int flags, void* param) {
+    switch(event){
+        case CV_EVENT_LBUTTONUP:
+            cout << x << " " << y << endl;
+            break;
+    }
+}
+
+void addMouseHandler(cv::String window) {
+    int mouseParam = CV_EVENT_FLAG_LBUTTON;
+    setMouseCallback(window, mouseHandler, &mouseParam);
 }

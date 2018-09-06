@@ -39,7 +39,7 @@ public:
     static double getArea(InputArray img);
     static vector<Whisker> projectToWhiskers(Model * model, Vec6f pose, Mat K);
 private:
-    static constexpr double WHISKER_SPACING = 400;
+    static constexpr double WHISKER_SPACING = 50;
 };
 
 #endif /* asm_hpp */

@@ -88,14 +88,14 @@ vector<Whisker> ASM::projectToWhiskers(Model * model, Vec6f pose, Mat K) {
         double length = sqrt(edge.dot(edge));
         
         // Divide up the edge
-        int numWhiskers = MAX(1, ceil(length/WHISKER_SPACING - 0.5));
-        double offset = 0.5 * (length - (numWhiskers-1) * WHISKER_SPACING);
+        int numWhiskers = MAX(1, ceil(length/WHISKER_SPACING));
+        double spacing = length/(numWhiskers+1);
         
         Mat centres;
         hconcat(p0, p1, centres);
         
         for (int w = 0; w < numWhiskers; w++) {
-            Mat centrePt = p0 + edge * ((offset + w * WHISKER_SPACING)/length);
+            Mat centrePt = p0 + edge * ((w+1) * spacing/length);
             hconcat(centres, centrePt, centres);
         }
         
