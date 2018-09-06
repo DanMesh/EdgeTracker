@@ -96,9 +96,7 @@ int main(int argc, const char * argv[]) {
     while (!frame.empty()) {
         
         auto start = chrono::system_clock::now();   // Start the timer
-        
-        imshow("Frame", frame);
-        
+                
         // Segment by colour
         Mat seg = orange::segmentByColour(frame, model->colour);
         
@@ -116,8 +114,8 @@ int main(int argc, const char * argv[]) {
             // Generate a set of whiskers
             vector<Whisker> whiskers = ASM::projectToWhiskers(model, est.pose, K);
             
-            Mat cannyTest;
-            canny.copyTo(cannyTest);
+            //Mat cannyTest;
+            //canny.copyTo(cannyTest);
             
             // Sample along the model edges and find the edges that intersect each whisker
             Mat targetPoints = Mat(2, 0, CV_32S);
@@ -128,12 +126,12 @@ int main(int argc, const char * argv[]) {
                 hconcat(whiskerModel, whiskers[w].modelCentre, whiskerModel);
                 hconcat(targetPoints, Mat(closestEdge), targetPoints);
                 
-                //TRACE:
-                circle(cannyTest, closestEdge, 3, Scalar(120));
-                circle(cannyTest, whiskers[w].centre, 3, Scalar(255));
-                line(cannyTest, closestEdge, whiskers[w].centre, Scalar(150));
+                //TRACE: Display the whiskers
+                //circle(cannyTest, closestEdge, 3, Scalar(120));
+                //circle(cannyTest, whiskers[w].centre, 3, Scalar(255));
+                //line(cannyTest, closestEdge, whiskers[w].centre, Scalar(150));
             }
-            imshow("CannyTest", cannyTest);
+            //imshow("CannyTest", cannyTest);
             
             targetPoints.convertTo(targetPoints, CV_32FC1);
             
@@ -160,11 +158,7 @@ int main(int argc, const char * argv[]) {
         times.push_back(time);
         if (time > longestTime) longestTime = time;
         
-        Mat canny2;
-        canny.copyTo(canny2);
-        model->draw(canny2, est.pose, K, Scalar(255, 255, 255));
-        imshow("Canny + Matched", canny2);
-        
+        // Draw the shape on the image
         model->draw(frame, est.pose, K, model->colour);
         imshow("Frame", frame);
         
@@ -181,7 +175,7 @@ int main(int argc, const char * argv[]) {
     cout << "No. frames   = " << times.size() << endl;
     cout << "Avg time     = " << meanTime[0] << " ms     " << 1000.0/meanTime[0] << " fps" << endl;
     cout << "stdDev time  = " << stdDevTime[0] << " ms" << endl;
-    cout << "Longest time = " << longestTime << " ms" << endl;
+    cout << "Longest time = " << longestTime << " ms     " << 1000.0/longestTime << " fps" << endl;
     
     return 0;
 }
