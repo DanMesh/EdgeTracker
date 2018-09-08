@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		37088513213E6DCB00D72740 /* libopencv_videoio.3.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37088512213E6DCB00D72740 /* libopencv_videoio.3.4.2.dylib */; };
+		3778237D214073E600A340D0 /* area.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3778237B214073E600A340D0 /* area.cpp */; };
 		3794518B213DC85700373D25 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3794518A213DC85700373D25 /* main.cpp */; };
 		37945193213DC8A300373D25 /* libopencv_core.3.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37945191213DC8A200373D25 /* libopencv_core.3.4.2.dylib */; };
 		37945194213DC8A300373D25 /* libopencv_highgui.3.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37945192213DC8A300373D25 /* libopencv_highgui.3.4.2.dylib */; };
@@ -33,6 +34,8 @@
 
 /* Begin PBXFileReference section */
 		37088512213E6DCB00D72740 /* libopencv_videoio.3.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_videoio.3.4.2.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.2/lib/libopencv_videoio.3.4.2.dylib; sourceTree = "<group>"; };
+		3778237B214073E600A340D0 /* area.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = area.cpp; sourceTree = "<group>"; };
+		3778237C214073E600A340D0 /* area.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = area.hpp; sourceTree = "<group>"; };
 		37945187213DC85700373D25 /* EdgeTracker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EdgeTracker; sourceTree = BUILT_PRODUCTS_DIR; };
 		3794518A213DC85700373D25 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		37945191213DC8A200373D25 /* libopencv_core.3.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.3.4.2.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.2/lib/libopencv_core.3.4.2.dylib; sourceTree = "<group>"; };
@@ -89,6 +92,8 @@
 		37945189213DC85700373D25 /* EdgeTracker */ = {
 			isa = PBXGroup;
 			children = (
+				3778237B214073E600A340D0 /* area.cpp */,
+				3778237C214073E600A340D0 /* area.hpp */,
 				379451A8213DD11200373D25 /* asm.cpp */,
 				379451A9213DD11200373D25 /* asm.hpp */,
 				37F89F25213F1DBC008F1E99 /* lsq.cpp */,
@@ -160,6 +165,7 @@
 			files = (
 				37F89F29213F1DBC008F1E99 /* lsq.cpp in Sources */,
 				3794518B213DC85700373D25 /* main.cpp in Sources */,
+				3778237D214073E600A340D0 /* area.cpp in Sources */,
 				379451AA213DD11200373D25 /* asm.cpp in Sources */,
 				37F89F2A213F1DBC008F1E99 /* models.cpp in Sources */,
 				37F89F2B213F1DBC008F1E99 /* orange.cpp in Sources */,
