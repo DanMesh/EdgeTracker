@@ -82,33 +82,65 @@ int main(int argc, const char * argv[]) {
     Model * model = new Dog(Scalar(19, 89, 64));
     //Model * model = new Arrow(Scalar(108, 79, 28));
     
-    Mat modelMat = model->pointsToMat();
-    vector<Point3f> modelPoints = model->getVertices();
-    
-    Mat target = dogTargetInit;
-    
     // * * * * * * * * * * * * * * * * *
     //   OPEN THE FIRST FRAME
     // * * * * * * * * * * * * * * * * *
     
     Mat frame;
-    String filename = "Trio_Vid.avi";
+    String filename = "Trio_1.avi";
     VideoCapture cap(dataFolder + filename);
     if(!cap.isOpened()) return -1;
     
     cap >> frame;
     imshow("Frame", frame);
     
+    // * * * * * * * * * * * * * * * * *
+    //   LOCATE THE STARTING POSITION
+    // * * * * * * * * * * * * * * * * *
+    //      Assume the object is
+    //      leaning back at
+    //      ±45 degrees
+    // * * * * * * * * * * * * * * * * *
+    
+    // Find the area & centoid of the object in the image
+    Mat segInit = orange::segmentByColour(frame, model->colour);
+    cvtColor(segInit, segInit, CV_BGR2GRAY);
+    threshold(segInit, segInit, 0, 255, CV_THRESH_BINARY);
+    Point centroid = ASM::getCentroid(segInit);
+    double area = ASM::getArea(segInit);
+    
+    // Draw the model at the default position and find the area & cetroid
+    Vec6f pose = {0, 0, 300, -CV_PI/4, 0, 0};
+    Mat initGuess = Mat::zeros(frame.rows, frame.cols, frame.type());
+    model->draw(initGuess, pose, K);
+    cvtColor(initGuess, initGuess, CV_BGR2GRAY);
+    threshold(initGuess, initGuess, 0, 255, CV_THRESH_BINARY);
+    Point modelCentroid = ASM::getCentroid(initGuess);
+    double modelArea = ASM::getArea(initGuess);
+    
+    // Convert centroids to 3D/homogeneous coordinates
+    Mat centroid2D;
+    hconcat( Mat(centroid), Mat(modelCentroid), centroid2D );
+    vconcat(centroid2D, Mat::ones(1, 2, centroid2D.type()), centroid2D);
+    centroid2D.convertTo(centroid2D, K.type());
+    Mat centroid3D = K.inv() * centroid2D;
+    
+    // Estimate the depth from the ratio of the model and measured areas,
+    // and create a pose guess from that.
+    // Note that the x & y coordinates need to be calculated using the pose
+    // of the centroid relative to the synthetic model image's centroid.
+    double zGuess = pose[2] * sqrt(modelArea/area);
+    centroid3D *= zGuess;
+    pose[0] = centroid3D.at<float>(0, 0) - centroid3D.at<float>(0, 1);
+    pose[1] = centroid3D.at<float>(1, 0) - centroid3D.at<float>(1, 1);
+    pose[2] = zGuess;
+    waitKey(0);
+    
+    // Set the intial pose
+    estimate est = estimate(pose, 0, 0);
+    
     // Pause to allow annotation
     // addMouseHandler("Frame"); waitKey(0);
-    
-    // Build an initial pose estimate based on previously measured points
-    Vec6f pose = {0, 0, 300, -CV_PI/4, 0, 0};
-    estimate est = lsq::poseEstimateLM(pose, modelMat, target.t(), K);
-    pose = est.pose;
-    cout << pose << endl;
-    cout << est.iterations << endl;
-    cout << est.error << endl << endl;
     
     // * * * * * * * * * * * * * * * * *
     //   CAMERA LOOP
