@@ -42,27 +42,6 @@ static float intrinsicMatrix[3][3] = {
 };
 static Mat K = Mat(3,3, CV_32FC1, intrinsicMatrix);
 
-// The initial Arrow endpoints in Trio_Vid.avi
-static float arrowInit[2][7] = {
-    {395, 640, 584, 839, 818, 737, 486},
-    {516, 351, 306, 277, 470, 415, 607}
-};
-static Mat arrowTargetInit = Mat(2,7, CV_32FC1, arrowInit);
-
-// The initial Dog endpoints in Trio_Vid.avi
-static float dogInit[2][15] = {
-    {169, 342, 379, 348, 410, 477, 511, 415, 420, 509, 111, 127, 254, 270, 158},
-    {194, 184, 162, 130, 114, 157, 155, 218, 366, 388, 419, 362, 348, 229, 233}
-};
-static Mat dogTargetInit = Mat(2,15, CV_32FC1, dogInit);
-
-// The initial Rectangle endpoints in Trio_Vid.avi
-static float rectangleInit[2][4] = {
-    {549, 692, 864, 714},
-    {120,  69, 175, 247}
-};
-static Mat rectangleTargetInit = Mat(2,4, CV_32FC1, rectangleInit);
-
 static string dataFolder = "../../../../../data/";
 
 
