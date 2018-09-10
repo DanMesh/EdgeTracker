@@ -62,6 +62,7 @@ int main(int argc, const char * argv[]) {
     Model * modelArrow = new Arrow(Scalar(108, 79, 28));
     //Model * model = new Box(175, 210, 49, Scalar(8, 152, 206)); // Yellow box
     //Model * model = new Box(204, 257, 70, Scalar(71, 92, 121)); // Brown box
+    //Model * modelDogLive = new Dog(Scalar(75, 140, 85));        // For use in live tracking
     
     vector<Model *> model = {modelRect, modelDog, modelArrow};
     
@@ -72,6 +73,7 @@ int main(int argc, const char * argv[]) {
     Mat frame;
     String filename = "Trio_1.avi";
     VideoCapture cap(dataFolder + filename);
+    //VideoCapture cap(0); waitKey(1000);   // Uncomment this line to try live tracking
     if(!cap.isOpened()) return -1;
     
     cap >> frame;
