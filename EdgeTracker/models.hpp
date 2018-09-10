@@ -44,7 +44,7 @@ protected:
 
 class Box : public Model {
 public:
-    Box(float width, float height, float depth) {
+    Box(float width, float height, float depth, Scalar(colourIn)) {
         createPoints(width, height, depth);
         edgeBasisList = {
             {0,1}, {1,2}, {2,3}, {3,0},
@@ -56,6 +56,7 @@ public:
             {0,4}, {1,5}, {2,6}, {3,7},
             {4,0}, {5,1}, {6,2}, {7,3}
         };
+        colour = colourIn;
     }
     bool vertexIsVisible(int vertexID, float xAngle, float yAngle);
     vector<bool> visibilityMask(float xAngle, float yAngle);

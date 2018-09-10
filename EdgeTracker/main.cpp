@@ -60,6 +60,7 @@ int main(int argc, const char * argv[]) {
     //Model * model = new Rectangle(60, 80, Scalar(20, 65, 165));
     Model * model = new Dog(Scalar(19, 89, 64));
     //Model * model = new Arrow(Scalar(108, 79, 28));
+    //Model * model = new Box(175, 210, 49, Scalar(8, 152, 206));
     
     // * * * * * * * * * * * * * * * * *
     //   OPEN THE FIRST FRAME
