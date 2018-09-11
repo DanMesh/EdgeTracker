@@ -60,11 +60,12 @@ int main(int argc, const char * argv[]) {
     Model * modelRect = new Rectangle(60, 80, Scalar(20, 65, 165));
     Model * modelDog = new Dog(Scalar(19, 89, 64));
     Model * modelArrow = new Arrow(Scalar(108, 79, 28));
-    //Model * model = new Box(175, 210, 49, Scalar(8, 152, 206)); // Yellow box
-    //Model * model = new Box(204, 257, 70, Scalar(71, 92, 121)); // Brown box
-    //Model * modelDogLive = new Dog(Scalar(75, 140, 85));        // For use in live tracking
+    Model * modelYellowBox = new Box(175, 210, 49, Scalar(0, 145, 206));    // Yellow box
+    Model * modelBrownBox = new Box(204, 257, 70, Scalar(71, 92, 121));     // Brown box
+    Model * modelDogLive = new Dog(Scalar(75, 140, 85));                    // For use in live tracking
     
     vector<Model *> model = {modelRect, modelDog, modelArrow};
+    //vector<Model *> model = {modelYellowBox};
     
     // * * * * * * * * * * * * * * * * *
     //   OPEN THE FIRST FRAME
@@ -87,7 +88,7 @@ int main(int argc, const char * argv[]) {
     //      ±45 degrees
     // * * * * * * * * * * * * * * * * *
     
-    vector<estimate> est;
+    vector<estimate> est, prevEst;
     
     // Find the initial pose of each model
     for (int m = 0; m < model.size(); m++) {
@@ -131,6 +132,7 @@ int main(int argc, const char * argv[]) {
         // Add the estimate to the list
         est.push_back(initEst);
     }
+    prevEst = est;
     
     // Pause to allow annotation
     // addMouseHandler("Frame");
@@ -161,6 +163,11 @@ int main(int argc, const char * argv[]) {
             // Extract the image edge point coordinates
             Mat edges;
             findNonZero(canny, edges);
+            
+            // Predict the next pose
+            Vec6f posePrediction = est[m].pose + 0.7 * (est[m].pose - prevEst[m].pose);
+            prevEst[m] = est[m];
+            est[m].pose = posePrediction;
             
             int iterations = 1;
             double error = lsq::ERROR_THRESHOLD + 1;
