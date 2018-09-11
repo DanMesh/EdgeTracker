@@ -1,0 +1,49 @@
+//
+//  quadric.hpp
+//  EdgeTracker
+//
+//  Created by Daniel Mesham on 11/09/2018.
+//  Copyright © 2018 Daniel Mesham. All rights reserved.
+//
+
+#ifndef quadric_hpp
+#define quadric_hpp
+
+#include <opencv2/core/core.hpp>
+#include <stdio.h>
+
+using namespace std;
+using namespace cv;
+
+
+// * * * * * * * * * * * * * * *
+//      Plane
+// * * * * * * * * * * * * * * *
+
+class Plane {
+public:
+    Plane(Point3f normal, Point3f point);
+    Mat pi;
+};
+
+
+// * * * * * * * * * * * * * * *
+//      Quadric
+// * * * * * * * * * * * * * * *
+
+class Quadric {
+public:
+    Quadric(Mat Q_in, vector<Plane> bounds_in = {}, Scalar colour_in = Scalar(255, 255, 255)) : Q(Q_in), colour(colour_in) {
+        makeBounds(bounds_in);
+    };
+    Scalar colour;
+    Mat Q, pi;
+    vector<bool> pointsBetweenBounds(Mat points);
+    //virtual void draw(Mat img, Vec6f pose, Mat K, Scalar drawColour = Scalar(255, 255, 255)) = 0;
+    
+private:
+    void makeBounds(vector<Plane> bounds);
+    
+};
+
+#endif /* quadric_hpp */

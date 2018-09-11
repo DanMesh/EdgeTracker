@@ -16,6 +16,7 @@
 #include "lsq.hpp"
 #include "models.hpp"
 #include "orange.hpp"
+#include "quadric.hpp"
 
 #include <iostream>
 #include <chrono>
@@ -52,6 +53,23 @@ static string dataFolder = "../../../../../data/";
 
 
 int main(int argc, const char * argv[]) {
+    
+    // * * * * * * * * * * * * * * * * *
+    //   TESTING QUADRICS
+    // * * * * * * * * * * * * * * * * *
+    
+    Plane pl1 = Plane(Point3f(1,1,1), Point3f(0,0,0));
+    Plane pl2 = Plane(Point3f(-1,-1,-1), Point3f(1,1,1));
+    
+    Quadric qu = Quadric(Mat(Point3f(1,1,1)), {pl1, pl2});
+    
+    Mat x;
+    hconcat(Mat(Point3f(-1, -1, -1)), Mat(Point3f(0.5, 0.5, 0.5)), x);
+    vconcat(x, Mat::ones(1, x.cols, x.type()), x);
+    vector<bool> betw = qu.pointsBetweenBounds(x);
+    cout << betw[0] << " " << betw[1] << endl;
+    
+    return 12;
     
     // * * * * * * * * * * * * * * * * *
     //   MODEL CREATION
