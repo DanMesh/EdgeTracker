@@ -50,7 +50,7 @@ Mat orange::segmentByColour(Mat img, Scalar colour) {
     Vec3b hsvPixel(hsv.at<Vec3b>(0,0));
     
     // Establish H, S, V ranges
-    int thr[3] = {30, 50, 50};
+    int thr[3] = {30, 100, 150};
     Scalar minHSV = Scalar(hsvPixel.val[0] - thr[0], hsvPixel.val[1] - thr[1], hsvPixel.val[2] - thr[2]);
     Scalar maxHSV = Scalar(hsvPixel.val[0] + thr[0], hsvPixel.val[1] + thr[1], hsvPixel.val[2] + thr[2]);
     
