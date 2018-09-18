@@ -94,7 +94,7 @@ void Box::createPoints(float w, float h, float d) {
     vertices = {p0, p1, p2, p3, p4, p5, p6, p7};
 }
 
-void Box::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
+void Box::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
     Mat proj = lsq::projection(pose, pointsToMat(), K);
     
     // Create a list of points
@@ -145,7 +145,7 @@ void Rectangle::createPoints(float w, float h) {
     vertices = {p0, p1, p2, p3};
 }
 
-void Rectangle::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
+void Rectangle::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
     Mat proj = lsq::projection(pose, pointsToMat(), K);
     
     // Create a list of points
@@ -155,9 +155,17 @@ void Rectangle::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
         points[0][i] = Point(col.at<float>(0), col.at<float>(1));
     }
     
-    const Point* ppt[1] = {points[0]};
-    int npt[] = {4};
-    fillPoly(img, ppt, npt, 1, colour);
+    if (!lines) {
+        const Point* ppt[1] = {points[0]};
+        int npt[] = {4};
+        fillPoly(img, ppt, npt, 1, colour);
+    }
+    else {
+        for (int i = 0; i < edgeBasisList.size()/2; i++) {
+            vector<int> edge = edgeBasisList[i];
+            line(img, points[0][edge[0]], points[0][edge[1]], colour, 1);
+        }
+    }
 }
 
 
@@ -182,7 +190,7 @@ vector<bool> Dog::visibilityMask(float xAngle, float yAngle) {
     return {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
 }
 
-void Dog::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
+void Dog::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
     Mat proj = lsq::projection(pose, pointsToMat(), K);
     
     // Create a list of points
@@ -192,9 +200,17 @@ void Dog::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
         points[0][i] = Point(col.at<float>(0), col.at<float>(1));
     }
     
-    const Point* ppt[1] = {points[0]};
-    int npt[] = {15};
-    fillPoly(img, ppt, npt, 1, colour);
+    if (!lines) {
+        const Point* ppt[1] = {points[0]};
+        int npt[] = {15};
+        fillPoly(img, ppt, npt, 1, colour);
+    }
+    else {
+        for (int i = 0; i < edgeBasisList.size()/2; i++) {
+            vector<int> edge = edgeBasisList[i];
+            line(img, points[0][edge[0]], points[0][edge[1]], colour, 1);
+        }
+    }
 }
 
 
@@ -218,7 +234,7 @@ vector<bool> Arrow::visibilityMask(float xAngle, float yAngle) {
     return {true, true, true, true, true, true, true};
 }
 
-void Arrow::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
+void Arrow::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
     Mat proj = lsq::projection(pose, pointsToMat(), K);
     
     // Create a list of points
@@ -228,7 +244,15 @@ void Arrow::draw(Mat img, Vec6f pose, Mat K, Scalar colour) {
         points[0][i] = Point(col.at<float>(0), col.at<float>(1));
     }
     
-    const Point* ppt[1] = {points[0]};
-    int npt[] = {7};
-    fillPoly(img, ppt, npt, 1, colour);
+    if (!lines) {
+        const Point* ppt[1] = {points[0]};
+        int npt[] = {7};
+        fillPoly(img, ppt, npt, 1, colour);
+    }
+    else {
+        for (int i = 0; i < edgeBasisList.size()/2; i++) {
+            vector<int> edge = edgeBasisList[i];
+            line(img, points[0][edge[0]], points[0][edge[1]], colour, 1);
+        }
+    }
 }

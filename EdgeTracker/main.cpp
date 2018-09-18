@@ -66,6 +66,7 @@ int main(int argc, const char * argv[]) {
     
     vector<Model *> model = {modelRect, modelDog, modelArrow};
     //vector<Model *> model = {modelYellowBox};
+    //vector<Model *> model = {modelDog};
     
     // * * * * * * * * * * * * * * * * *
     //   OPEN THE FIRST FRAME
@@ -103,7 +104,7 @@ int main(int argc, const char * argv[]) {
         // Draw the model at the default position and find the area & cetroid
         Vec6f initPose = {0, 0, 300, -CV_PI/4, 0, 0};
         Mat initGuess = Mat::zeros(frame.rows, frame.cols, frame.type());
-        model[m]->draw(initGuess, initPose, K);
+        model[m]->draw(initGuess, initPose, K, false);
         cvtColor(initGuess, initGuess, CV_BGR2GRAY);
         threshold(initGuess, initGuess, 0, 255, CV_THRESH_BINARY);
         Point modelCentroid = ASM::getCentroid(initGuess);
@@ -223,7 +224,7 @@ int main(int argc, const char * argv[]) {
         
         // Draw the shapes on the image
         for (int m = 0; m < model.size(); m++) {
-            model[m]->draw(frame, est[m].pose, K, model[m]->colour);
+            model[m]->draw(frame, est[m].pose, K, true);
         }
         imshow("Frame", frame);
         

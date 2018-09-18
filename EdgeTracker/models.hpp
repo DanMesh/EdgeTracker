@@ -28,7 +28,7 @@ public:
     vector<Point3f> getVertices() {return vertices;};
     vector<vector<int>> getEdgeBasisList() {return edgeBasisList;}
     Mat pointsToMat();
-    virtual void draw(Mat img, Vec6f pose, Mat K, Scalar drawColour = Scalar(255, 255, 255)) = 0;
+    virtual void draw(Mat img, Vec6f pose, Mat K, bool lines = true, Scalar colour = Scalar(255, 255, 255)) = 0;
     Scalar colour = Scalar(255, 255, 255);
     
 protected:
@@ -60,7 +60,7 @@ public:
     }
     bool vertexIsVisible(int vertexID, float xAngle, float yAngle);
     vector<bool> visibilityMask(float xAngle, float yAngle);
-    void draw(Mat img, Vec6f pose, Mat K, Scalar drawColour);
+    void draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour);
     
 private:
     static const vector<vector<float>> xAngleLimits;
@@ -80,19 +80,13 @@ public:
         createPoints(width, height);
         edgeBasisList = {
             {0,1}, {1,2}, {2,3}, {3,0},
-            {1,0}, {2,1}, {3,2}, {0,3},
-            
-            {4,5}, {5,6}, {6,7}, {7,4},
-            {5,4}, {6,5}, {7,6}, {4,7},
-            
-            {0,4}, {1,5}, {2,6}, {3,7},
-            {4,0}, {5,1}, {6,2}, {7,3}
+            {1,0}, {2,1}, {3,2}, {0,3}
         };
         colour = colourIn;
     }
     bool vertexIsVisible(int vertexID, float xAngle, float yAngle);
     vector<bool> visibilityMask(float xAngle, float yAngle);
-    void draw(Mat img, Vec6f pose, Mat K, Scalar drawColour);
+    void draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour);
     
 private:
     void createPoints(float width, float height);
@@ -108,7 +102,7 @@ public:
     Dog(Scalar colourIn);
     bool vertexIsVisible(int vertexID, float xAngle, float yAngle) {return true;};
     vector<bool> visibilityMask(float xAngle, float yAngle);
-    void draw(Mat img, Vec6f pose, Mat K, Scalar drawColour);
+    void draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour);
 };
 
 
@@ -121,7 +115,7 @@ public:
     Arrow(Scalar colourIn);
     bool vertexIsVisible(int vertexID, float xAngle, float yAngle) {return true;};
     vector<bool> visibilityMask(float xAngle, float yAngle);
-    void draw(Mat img, Vec6f pose, Mat K, Scalar drawColour);
+    void draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour);
 };
 
 
