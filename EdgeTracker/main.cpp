@@ -12,6 +12,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/videoio/videoio.hpp>
 
+#include "area.hpp"
 #include "asm.hpp"
 #include "lsq.hpp"
 #include "models.hpp"
@@ -43,6 +44,8 @@ static float intrinsicMatrix[3][3] = {
 static Mat K = Mat(3,3, CV_32FC1, intrinsicMatrix);
 
 static string dataFolder = "../../../../../data/";
+
+static bool REPORT_ERRORS = true; // Whether to report the area error (slows performance)
 
 
 
@@ -146,6 +149,8 @@ int main(int argc, const char * argv[]) {
     
     vector<double> times = {};
     double longestTime = 0.0;
+    vector<vector<double>> errors = vector<vector<double>>(model.size());
+    vector<double> worstError = vector<double>(model.size());
     
     while (!frame.empty()) {
         
@@ -212,6 +217,11 @@ int main(int argc, const char * argv[]) {
             }
             cout << "Iterations = " << iterations << endl;
             
+            // Measure and report the unexplained area
+            if (!REPORT_ERRORS) continue;
+            double unexplainedArea = area::unexplainedArea(est[m].pose, model[m], seg, K);
+            errors[m].push_back(unexplainedArea);
+            if (unexplainedArea > worstError[m]) worstError[m] = unexplainedArea;
         }
         
         // Stop timer and show time
@@ -242,6 +252,16 @@ int main(int argc, const char * argv[]) {
     cout << "Avg time     = " << meanTime[0] << " ms     " << 1000.0/meanTime[0] << " fps" << endl;
     cout << "stdDev time  = " << stdDevTime[0] << " ms" << endl;
     cout << "Longest time = " << longestTime << " ms     " << 1000.0/longestTime << " fps" << endl;
+    
+    // Report errors
+    if (!REPORT_ERRORS) return 0;
+    cout << endl << "AREA ERRORS:" << endl << "Model   Mean     StDev    Worst" << endl;
+    for (int m = 0; m < model.size(); m++) {
+        vector<double> meanError, stdDevError;
+        meanStdDev(errors[m], meanError, stdDevError);
+        printf("%4i    %5.2f    %5.2f    %5.2f \n", m, meanError[0], stdDevError[0], worstError[m]);
+        //cout << m << "   " << meanError[0] << "   " << stdDevError[0] << "   " << worstError[m] << endl;
+    }
     
     return 0;
 }
