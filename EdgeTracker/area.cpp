@@ -91,3 +91,26 @@ estimate area::poseEstimateArea(Vec6f pose1, Model * model, Mat img, Mat K, int 
     return estimate(pose1, E, iterations);
 }
 
+double area::unexplainedArea(Vec6f pose, Model * model, Mat img, Mat K) {
+    // Counts the percentage of the image pixels (in 'img') not explained by the
+    // model when in the given pose.
+    
+    // Count the number of pixels in the model projection
+    Mat modelProj = Mat(img.rows, img.cols, CV_8UC1, Scalar(0));
+    model->draw(modelProj, pose, K, Scalar(255, 255, 255));
+    
+    // Count the number of pixels in the image
+    Mat imgBinary;
+    cvtColor(img, imgBinary, CV_BGR2GRAY);
+    int numImagePixels = countNonZero(imgBinary);
+    
+    // Find the overlapping region
+    Mat overlap;
+    bitwise_and(imgBinary, modelProj, overlap);
+    int numOverlappingPixels = countNonZero(overlap);
+    
+    // Calculate the percentage of the image not in the intersection
+    int numUnexplainedPixels = numImagePixels - numOverlappingPixels;
+    return 100.0 * numUnexplainedPixels / numImagePixels;
+}
+

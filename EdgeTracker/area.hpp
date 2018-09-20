@@ -28,6 +28,7 @@ public:
     static double areaError(Vec6f pose, Model * model, Mat img, Mat K);
     static Mat jacobian(Vec6f pose, Model * model, Mat img, Mat K);
     static estimate poseEstimateArea(Vec6f pose1, Model * model, Mat img, Mat K, int maxIter = MAX_ITERATIONS);
+    static double unexplainedArea(Vec6f pose, Model * model, Mat img, Mat K);
 
 /*
  CONSTANTS
