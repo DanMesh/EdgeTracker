@@ -12,7 +12,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/videoio/videoio.hpp>
 
-#include "area.hpp"
 #include "asm.hpp"
 #include "lsq.hpp"
 #include "models.hpp"
@@ -111,12 +110,6 @@ int main(int argc, const char * argv[]) {
     cout << est.iterations << endl;
     cout << est.error << endl << endl;
     
-    //TRACE:
-    /*Mat seg1 = orange::segmentByColour(frame, model->colour);
-    double areaError = area::areaError(pose, model, seg1, K);
-    cout << areaError << endl;
-    return 12;*/
-    
     // * * * * * * * * * * * * * * * * *
     //   CAMERA LOOP
     // * * * * * * * * * * * * * * * * *
@@ -192,23 +185,6 @@ int main(int argc, const char * argv[]) {
         // Draw the shape on the image
         model->draw(frame, est.pose, K, model->colour);
         imshow("Frame", frame);
-        
-        // TRACE: getting the area matching to work
-        /*
-        cout << endl<< "Initial pose = " << est.pose << endl;
-        
-        double areaError = area::areaError(est.pose, model, seg, K);
-        cout << "AE before fitting = " << areaError << endl;
-        
-        estimate areaEst = area::poseEstimateArea(est.pose, model, seg, K, 20);
-        cout << "AE after fitting  = " << areaEst.error << "  " << areaEst.iterations << endl << areaEst.pose << endl;
-        
-        //waitKey(0);
-        Mat canny3;
-        canny.copyTo(canny3);
-        model->draw(canny3, areaEst.pose, K, Scalar(255, 255, 255));
-        imshow("Canny Area", canny3);
-        */
         
         // Get next frame
         cap.grab();
