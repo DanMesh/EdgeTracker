@@ -44,6 +44,7 @@ Point Whisker::closestEdgePoint(Mat edges, int maxDist) {
 Point Whisker::closestEdgePoint2(Mat canny, int maxDist) {
     Point endPos = centre + Point(maxDist*normal.x, maxDist*normal.y);
     Point endNeg = centre - Point(maxDist*normal.x, maxDist*normal.y);
+    if (centre.x < 0 || centre.y < 0 || centre.x >= canny.cols || centre.y >= canny.rows) return Point(-1,-1);
     if (canny.at<uchar>(centre) > 0) return centre;
     
     LineIterator liPos(canny, centre, endPos);
