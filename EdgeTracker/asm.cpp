@@ -41,6 +41,24 @@ Point Whisker::closestEdgePoint(Mat edges, int maxDist) {
     return bestPt;
 }
 
+Point Whisker::closestEdgePoint2(Mat canny, int maxDist) {
+    Point endPos = centre + Point(maxDist*normal.x, maxDist*normal.y);
+    Point endNeg = centre - Point(maxDist*normal.x, maxDist*normal.y);
+    if (canny.at<uchar>(centre) > 0) return centre;
+    
+    LineIterator liPos(canny, centre, endPos);
+    LineIterator liNeg(canny, centre, endNeg);
+    for (int i = 0; i < MIN(liPos.count, liNeg.count); i++, ++liPos, ++liNeg) {
+        if (canny.at<uchar>(liPos.pos()) > 0) {
+            // If exactly in between 2 edges, discard this whisker
+            if (canny.at<uchar>(liNeg.pos()) > 0) return Point(-1,-1);
+            return liPos.pos();
+        }
+        if (canny.at<uchar>(liNeg.pos()) > 0) return liNeg.pos();
+    }
+    return Point(-1,-1);
+}
+
 
 // * * * * * * * * * * * * * * *
 //      ASM

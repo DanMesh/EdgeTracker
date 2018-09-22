@@ -46,6 +46,7 @@ static Mat K = Mat(3,3, CV_32FC1, intrinsicMatrix);
 static string dataFolder = "../../../../../data/";
 
 static bool REPORT_ERRORS = true; // Whether to report the area error (slows performance)
+static bool USE_LINE_ITER = true; // Whether to use the line iterator technique for the whiskers
 
 
 
@@ -168,10 +169,11 @@ int main(int argc, const char * argv[]) {
             
             // Extract the image edge point coordinates
             Mat edges;
-            findNonZero(canny, edges);
+            if (!USE_LINE_ITER) findNonZero(canny, edges);
+            else dilate(canny, canny, getStructuringElement(CV_SHAPE_CROSS, Size(3,3)));
             
             // Predict the next pose
-            Vec6f posePrediction = est[m].pose + 0.7 * (est[m].pose - prevEst[m].pose);
+            Vec6f posePrediction = est[m].pose + 0.5 * (est[m].pose - prevEst[m].pose);
             prevEst[m] = est[m];
             est[m].pose = posePrediction;
             
@@ -188,7 +190,9 @@ int main(int argc, const char * argv[]) {
                 Mat targetPoints = Mat(2, 0, CV_32S);
                 Mat whiskerModel = Mat(4, 0, CV_32FC1);
                 for (int w = 0; w < whiskers.size(); w++) {
-                    Point closestEdge = whiskers[w].closestEdgePoint(edges);
+                    Point closestEdge;
+                    if (!USE_LINE_ITER) closestEdge = whiskers[w].closestEdgePoint(edges);
+                    else closestEdge = whiskers[w].closestEdgePoint2(canny);
                     if (closestEdge == Point(-1,-1)) continue;
                     hconcat(whiskerModel, whiskers[w].modelCentre, whiskerModel);
                     hconcat(targetPoints, Mat(closestEdge), targetPoints);
@@ -197,6 +201,10 @@ int main(int argc, const char * argv[]) {
                     //circle(cannyTest, closestEdge, 3, Scalar(120));
                     //circle(cannyTest, whiskers[w].centre, 3, Scalar(255));
                     //line(cannyTest, closestEdge, whiskers[w].centre, Scalar(150));
+                    
+                    //Point endPos = whiskers[w].centre + Point(40*whiskers[w].normal.x, 40*whiskers[w].normal.y);
+                    //Point endNeg = whiskers[w].centre - Point(40*whiskers[w].normal.x, 40*whiskers[w].normal.y);
+                    //line(cannyTest, endPos, endNeg, Scalar(200));
                 }
                 //imshow("CannyTest", cannyTest);
                 
