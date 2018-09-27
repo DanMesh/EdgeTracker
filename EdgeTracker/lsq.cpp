@@ -27,6 +27,9 @@ estimate lsq::poseEstimateLM(Vec6f pose1, Mat model, Mat target, Mat K, int maxI
         Mat eps;
         subtract(y.rowRange(0, 2).t(), target, eps);
         eps = lsq::pointsAsCol(eps.t());
+        for (int i = 0; i < eps.rows; i++) {
+            if (eps.at<float>(i) > 20) eps.at<float>(i) = 20;
+        }
         Mat Jp = J.t() * J;
         Jp = -Jp.inv() * J.t();
         Mat del = Jp * eps;

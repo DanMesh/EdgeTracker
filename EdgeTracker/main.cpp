@@ -186,10 +186,6 @@ int main(int argc, const char * argv[]) {
         
         // Find the pose of each model
         for (int m = 0; m < model.size(); m++) {
-            
-            // Segment by colour
-            Mat seg = orange::segmentByColour(frame, model[m]->colour);
-            
             // Predict the next pose
             Vec6f posePrediction = est[m].pose + 0.5 * (est[m].pose - prevEst[m].pose);
             prevEst[m] = est[m];
@@ -238,14 +234,6 @@ int main(int argc, const char * argv[]) {
                 //waitKey(0);
             }
             cout << "Iterations = " << iterations << endl;
-            
-            
-            
-            // Measure and report the unexplained area
-            if (!REPORT_ERRORS) continue;
-            double unexplainedArea = area::unexplainedArea(est[m].pose, model[m], seg, K);
-            errors[m].push_back(unexplainedArea);
-            if (unexplainedArea > worstError[m]) worstError[m] = unexplainedArea;
         }
         
         // Stop timer and show time
@@ -258,6 +246,14 @@ int main(int argc, const char * argv[]) {
         
         // Draw the shapes on the image
         for (int m = 0; m < model.size(); m++) {
+            // Measure and report the area error
+            if (REPORT_ERRORS) {
+                Mat seg = orange::segmentByColour(frame, model[m]->colour);
+                double areaError = area::areaError(est[m].pose, model[m], seg, K);
+                errors[m].push_back(areaError);
+                if (areaError > worstError[m]) worstError[m] = areaError;
+            }
+            
             model[m]->draw(frame, est[m].pose, K, true);
         }
         imshow("Frame", frame);
