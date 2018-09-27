@@ -145,7 +145,8 @@ int main(int argc, const char * argv[]) {
     
     
      // Uncomment block to try boxes with initialisation
-    /*Mat frame2;
+    /*
+    Mat frame2;
     frame.copyTo(frame2);
     //Vec6f posey = {40, 10, 810, -1.15, 0.18, -0.03}; // Blue_1.avi
     //Vec6f posey = {60, 35, 800, -1.15, 0.13, -0.01}; // Blue_2.avi
@@ -155,8 +156,8 @@ int main(int argc, const char * argv[]) {
     model[0]->draw(frame2, posey, K, true);
     est[0].pose = posey;
     prevEst = est;
-    imshow("Frame2", frame2);*/
-    
+    imshow("Frame2", frame2);
+    */
     
     waitKey(0);
     
@@ -173,20 +174,21 @@ int main(int argc, const char * argv[]) {
         
         auto start = chrono::system_clock::now();   // Start the timer
         
+        // Detect edges
+        Mat canny, cannyTest;
+        Canny(frame, canny, 30, 90);
+        canny.copyTo(cannyTest);
+        
+        // Extract the image edge point coordinates
+        Mat edges;
+        if (!USE_LINE_ITER) findNonZero(canny, edges);
+        else dilate(canny, canny, getStructuringElement(CV_SHAPE_CROSS, Size(3,3)));
+        
         // Find the pose of each model
         for (int m = 0; m < model.size(); m++) {
             
             // Segment by colour
             Mat seg = orange::segmentByColour(frame, model[m]->colour);
-            
-            // Detect edges
-            Mat canny;
-            Canny(seg, canny, 70, 210);
-            
-            // Extract the image edge point coordinates
-            Mat edges;
-            if (!USE_LINE_ITER) findNonZero(canny, edges);
-            else dilate(canny, canny, getStructuringElement(CV_SHAPE_CROSS, Size(3,3)));
             
             // Predict the next pose
             Vec6f posePrediction = est[m].pose + 0.5 * (est[m].pose - prevEst[m].pose);
@@ -198,9 +200,6 @@ int main(int argc, const char * argv[]) {
             while (error > lsq::ERROR_THRESHOLD && iterations < 20) {
                 // Generate a set of whiskers
                 vector<Whisker> whiskers = ASM::projectToWhiskers(model[m], est[m].pose, K);
-                
-                //Mat cannyTest;
-                //canny.copyTo(cannyTest);
                 
                 // Sample along the model edges and find the edges that intersect each whisker
                 Mat targetPoints = Mat(2, 0, CV_32S);
@@ -214,15 +213,14 @@ int main(int argc, const char * argv[]) {
                     hconcat(targetPoints, Mat(closestEdge), targetPoints);
                     
                     //TRACE: Display the whiskers
-                    //circle(cannyTest, closestEdge, 3, Scalar(120));
-                    //circle(cannyTest, whiskers[w].centre, 3, Scalar(255));
-                    //line(cannyTest, closestEdge, whiskers[w].centre, Scalar(150));
+                    circle(cannyTest, closestEdge, 3, Scalar(120));
+                    circle(cannyTest, whiskers[w].centre, 3, Scalar(255));
+                    line(cannyTest, closestEdge, whiskers[w].centre, Scalar(150));
                     
                     //Point endPos = whiskers[w].centre + Point(40*whiskers[w].normal.x, 40*whiskers[w].normal.y);
                     //Point endNeg = whiskers[w].centre - Point(40*whiskers[w].normal.x, 40*whiskers[w].normal.y);
                     //line(cannyTest, endPos, endNeg, Scalar(200));
                 }
-                //imshow("CannyTest", cannyTest);
                 
                 targetPoints.convertTo(targetPoints, CV_32FC1);
                 
@@ -240,6 +238,8 @@ int main(int argc, const char * argv[]) {
                 //waitKey(0);
             }
             cout << "Iterations = " << iterations << endl;
+            
+            
             
             // Measure and report the unexplained area
             if (!REPORT_ERRORS) continue;
@@ -261,6 +261,8 @@ int main(int argc, const char * argv[]) {
             model[m]->draw(frame, est[m].pose, K, true);
         }
         imshow("Frame", frame);
+        
+        imshow("CannyTest", cannyTest);
         
         // Get next frame
         cap.grab();
