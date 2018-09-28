@@ -50,12 +50,16 @@ class lsq {
  */
 public:
     static estimate poseEstimateLM(Vec6f pose1, Mat x, Mat target, Mat K, int maxIter = MAX_ITERATIONS);
+    static estimate poseEstimateLM(Vec6f pose1, Mat x, Mat target, Mat K, Mat imgHue, Scalar colour, Mat colourPoints, float alpha, int maxIter = MAX_ITERATIONS);
     static Mat translation(float x, float y, float z);
     static Mat rotation(float x, float y, float z);
     static Mat projection(Vec6f pose, Mat x, Mat K);
     static float projectionError(Mat target, Mat proj);
+    static float colourError(Mat imgH, Mat points, int hue);
+    static Mat coloursAtPoints(Mat imgHue, Mat points);
     static Mat pointsAsCol(Mat points);
     static Mat jacobian(Vec6f pose, Mat x, Mat K);
+    static Mat jacobianColour(Vec6f pose, Mat points, Mat K, Mat imgHue);
         
 /*
     CONSTANTS
