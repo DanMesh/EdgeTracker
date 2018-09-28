@@ -156,7 +156,7 @@ int main(int argc, const char * argv[]) {
     model[0]->draw(frame2, posey, K, true);
     est[0].pose = posey;
     prevEst = est;
-    imshow("Frame2", frame2);
+    imshow("Frame", frame2);
     */
     
     waitKey(0);
@@ -176,7 +176,7 @@ int main(int argc, const char * argv[]) {
         
         // Detect edges
         Mat canny, cannyTest;
-        Canny(frame, canny, 30, 90);
+        Canny(frame, canny, 20, 60);
         canny.copyTo(cannyTest);
         
         // Extract the image edge point coordinates
