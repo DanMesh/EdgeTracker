@@ -12,7 +12,8 @@
 double area::areaError(Vec6f pose, Model * model, Mat img, Mat K) {
     // Count the number of pixels in the model projection
     Mat modelProj = Mat(img.rows, img.cols, CV_8UC1, Scalar(0));
-    model->draw(modelProj, pose, K, false);
+    model->draw(modelProj, pose, K, false, Scalar(255));
+    threshold(modelProj, modelProj, 0, 255, modelProj.type());
     int numModelPixels = countNonZero(modelProj);
     
     // Count the number of pixels in the image

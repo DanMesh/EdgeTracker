@@ -19,7 +19,10 @@
 #include "orange.hpp"
 
 #include <iostream>
+#include <fstream>
 #include <chrono>
+#include <ctime>
+#include <iomanip>
 
 using namespace std;
 using namespace cv;
@@ -30,6 +33,7 @@ using namespace cv;
 
 void mouseHandler(int event, int x, int y, int flags, void* param);
 void addMouseHandler(cv::String window);
+string currentDateTime();
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 //      Constants
@@ -44,7 +48,9 @@ static float intrinsicMatrix[3][3] = {
 static Mat K = Mat(3,3, CV_32FC1, intrinsicMatrix);
 
 static string dataFolder = "../../../../../data/";
+static string logFolder = "../../../../../logs/";
 
+static bool LOGGING = false; // Whether to log data to CSV files
 static bool REPORT_ERRORS = true; // Whether to report the area error (slows performance)
 static bool USE_LINE_ITER = true; // Whether to use the line iterator technique for the whiskers
 
@@ -72,6 +78,17 @@ int main(int argc, const char * argv[]) {
     vector<Model *> model = {modelRect, modelDog, modelArrow};
     //vector<Model *> model = {modelBlueBox};
     //vector<Model *> model = {modelDog};
+    
+    // * * * * * * * * * * * * * * * * *
+    //   SET UP LOGGER
+    // * * * * * * * * * * * * * * * * *
+    ofstream log;
+    if (LOGGING) {
+        log.open(logFolder + currentDateTime() + ".csv");
+        log << "Time";
+        for (int m = 0; m < model.size(); m++) log << ";Model " << m;
+        log << endl;
+    }
     
     // * * * * * * * * * * * * * * * * *
     //   OPEN THE FIRST FRAME
@@ -243,6 +260,7 @@ int main(int argc, const char * argv[]) {
         cout << "Frame Time = " << time << " ms" << endl << endl;
         times.push_back(time);
         if (time > longestTime) longestTime = time;
+        if (LOGGING) log << time;
         
         // Draw the shapes on the image
         for (int m = 0; m < model.size(); m++) {
@@ -252,11 +270,13 @@ int main(int argc, const char * argv[]) {
                 double areaError = area::areaError(est[m].pose, model[m], seg, K);
                 errors[m].push_back(areaError);
                 if (areaError > worstError[m]) worstError[m] = areaError;
+                if (LOGGING) log << ";" << areaError;
             }
             
             model[m]->draw(frame, est[m].pose, K, true);
         }
         imshow("Frame", frame);
+        if (LOGGING) log << endl;
         
         imshow("CannyTest", cannyTest);
         
@@ -285,6 +305,7 @@ int main(int argc, const char * argv[]) {
         //cout << m << "   " << meanError[0] << "   " << stdDevError[0] << "   " << worstError[m] << endl;
     }
     
+    if (LOGGING) log.close();
     return 0;
 }
 
@@ -304,4 +325,13 @@ void mouseHandler(int event, int x, int y, int flags, void* param) {
 void addMouseHandler(cv::String window) {
     int mouseParam = CV_EVENT_FLAG_LBUTTON;
     setMouseCallback(window, mouseHandler, &mouseParam);
+}
+
+string currentDateTime() {
+    auto t = time(nullptr);
+    auto tm = *localtime(&t);
+    
+    ostringstream oss;
+    oss << put_time(&tm, "%Y.%m.%d_%H.%M.%S");
+    return oss.str();
 }
