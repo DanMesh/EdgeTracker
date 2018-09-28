@@ -60,6 +60,33 @@ Point Whisker::closestEdgePoint2(Mat canny, int maxDist) {
     return Point(-1,-1);
 }
 
+Point Whisker::closestEdgePoint2(Mat canny[3], int maxDist) {
+    Point endPos = centre + Point(maxDist*normal.x, maxDist*normal.y);
+    Point endNeg = centre - Point(maxDist*normal.x, maxDist*normal.y);
+    if (centre.x < 0 || centre.y < 0 || centre.x >= canny[0].cols || centre.y >= canny[0].rows) return Point(-1,-1);
+    if (canny[0].at<uchar>(centre) > 0) return centre;
+    if (canny[1].at<uchar>(centre) > 0) return centre;
+    if (canny[2].at<uchar>(centre) > 0) return centre;
+    
+    LineIterator liPos(canny[0], centre, endPos);
+    LineIterator liNeg(canny[0], centre, endNeg);
+    for (int i = 0; i < MIN(liPos.count, liNeg.count); i++, ++liPos, ++liNeg) {
+        if ((canny[0].at<uchar>(liPos.pos()) > 0) ||
+            (canny[1].at<uchar>(liPos.pos()) > 0) ||
+            (canny[2].at<uchar>(liPos.pos()) > 0)) {
+            // If exactly in between 2 edges, discard this whisker
+            if ((canny[0].at<uchar>(liNeg.pos()) > 0) ||
+                (canny[1].at<uchar>(liNeg.pos()) > 0) ||
+                (canny[2].at<uchar>(liNeg.pos()) > 0)) return Point(-1,-1);
+            return liPos.pos();
+        }
+        if ((canny[0].at<uchar>(liNeg.pos()) > 0) ||
+            (canny[1].at<uchar>(liNeg.pos()) > 0) ||
+            (canny[2].at<uchar>(liNeg.pos()) > 0)) return liNeg.pos();
+    }
+    return Point(-1,-1);
+}
+
 
 // * * * * * * * * * * * * * * *
 //      ASM
