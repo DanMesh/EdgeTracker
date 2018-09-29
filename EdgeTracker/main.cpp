@@ -64,6 +64,19 @@ static bool USE_LINE_ITER = true; // Whether to use the line iterator technique 
 int main(int argc, const char * argv[]) {
     
     // * * * * * * * * * * * * * * * * *
+    //   OPEN THE FIRST FRAME
+    // * * * * * * * * * * * * * * * * *
+    
+    Mat frame;
+    String filename = "Blue_1.avi";
+    VideoCapture cap(dataFolder + filename);
+    //VideoCapture cap(0); waitKey(1000);   // Uncomment this line to try live tracking
+    if(!cap.isOpened()) return -1;
+    
+    cap >> frame;
+    imshow("Frame", frame);
+    
+    // * * * * * * * * * * * * * * * * *
     //   MODEL CREATION
     // * * * * * * * * * * * * * * * * *
     
@@ -73,11 +86,121 @@ int main(int argc, const char * argv[]) {
     Model * modelYellowBox = new Box(175, 210, 49, Scalar(0, 145, 206));    // Yellow box
     Model * modelBrownBox = new Box(204, 257, 70, Scalar(71, 92, 121));     // Brown box
     Model * modelBlueBox = new Box(300, 400, 75, Scalar(180, 83, 40));      // Blue foam box
+    Model * modelBrownCube = new Box(70, 70, 70, Scalar(35, 55, 90));       // Brown numbers cube
     Model * modelDogLive = new Dog(Scalar(75, 140, 85));                    // For use in live tracking
+
+    vector<Model *> model;
     
-    vector<Model *> model = {modelRect, modelDog, modelArrow};
-    //vector<Model *> model = {modelBlueBox};
-    //vector<Model *> model = {modelDog};
+    // * * * * * * * * * * * * * * * * *
+    //   SELECT MODELS
+    // * * * * * * * * * * * * * * * * *
+    vector<estimate> est, prevEst;
+    if (filename == "Trio_1.avi" || filename == "Trio_2.avi" || filename == "Trio_3.avi") {
+        model ={modelRect, modelDog, modelArrow};
+    }
+    else if (filename == "Occlude_1.avi") {
+        model = {modelDog};
+    }
+    else if (filename == "Blue_1.avi") {
+        model = {modelBlueBox};
+        est = { estimate({40, 10, 810, -1.15, 0.18, -0.03}, 0, 0) };
+    }
+    else if (filename == "Blue_2.avi") {
+        model = {modelBlueBox};
+        est = { estimate({60, 35, 800, -1.15, 0.13, -0.01}, 0, 0) };
+    }
+    else if (filename == "Blue_3.avi") {
+        model = {modelBlueBox};
+        est = { estimate({70, 0, 770, -1.27, 0.18, -0.02}, 0, 0) };
+    }
+    else if (filename == "Yellow_1.avi") {
+        model = {modelYellowBox};
+        est = { estimate({-5, -7.3, 450, -1.02, -0.20, -0.09}, 0, 0) };
+    }
+    else if (filename == "Yellow_2.avi") {
+        model = {modelYellowBox};
+        est = { estimate({0, -24, 670, -1.02, 0.10, 0}, 0, 0) };
+    }
+    else if (filename == "Brown_1.avi") {
+        model = {modelBrownBox};
+        est = { estimate({33, -15, 640, -1.05, 0.25, -0.01}, 0, 0) };
+    }
+    else if (filename == "Corners_1.avi") {
+        model = {modelBlueBox, modelBrownCube};
+        est = { estimate({30, -35, 630, -0.97, 0.7, 0.42}, 0, 0),
+                estimate({-8, -15, 420, -0.97, 0.7, 0.42}, 0, 0) };
+    }
+    else if (filename == "Stack_1.avi") {
+        model = {modelBlueBox, modelBrownBox, modelYellowBox};
+        est = { estimate({-200, 30, 1050, -0.97, 0.95, 0.5}, 0, 0),
+                estimate({190, 50, 970, -1.18, 0.6, 0.24}, 0, 0),
+                estimate({-40, 130, 800, -0.0, 1.2, 1.6}, 0, 0) };
+    }
+    
+    // * * * * * * * * * * * * * * * * *
+    //   LOCATE THE STARTING POSITIONS
+    // * * * * * * * * * * * * * * * * *
+    //      Assume the objects are
+    //      leaning back at
+    //      ±45 degrees
+    // * * * * * * * * * * * * * * * * *
+    
+    // If no initial poses are given, find them
+    if (est.size() == 0) {
+        // Find the initial pose of each model
+        for (int m = 0; m < model.size(); m++) {
+            
+            // Find the area & centoid of the object in the image
+            Mat segInit = orange::segmentByColour(frame, model[m]->colour);
+            cvtColor(segInit, segInit, CV_BGR2GRAY);
+            threshold(segInit, segInit, 0, 255, CV_THRESH_BINARY);
+            Point centroid = ASM::getCentroid(segInit);
+            double area = ASM::getArea(segInit);
+            
+            // Draw the model at the default position and find the area & cetroid
+            Vec6f initPose = {0, 0, 300, -CV_PI/4, 0, 0};
+            Mat initGuess = Mat::zeros(frame.rows, frame.cols, frame.type());
+            model[m]->draw(initGuess, initPose, K, false);
+            cvtColor(initGuess, initGuess, CV_BGR2GRAY);
+            threshold(initGuess, initGuess, 0, 255, CV_THRESH_BINARY);
+            Point modelCentroid = ASM::getCentroid(initGuess);
+            double modelArea = ASM::getArea(initGuess);
+            
+            // Convert centroids to 3D/homogeneous coordinates
+            Mat centroid2D;
+            hconcat( Mat(centroid), Mat(modelCentroid), centroid2D );
+            vconcat(centroid2D, Mat::ones(1, 2, centroid2D.type()), centroid2D);
+            centroid2D.convertTo(centroid2D, K.type());
+            Mat centroid3D = K.inv() * centroid2D;
+            
+            // Estimate the depth from the ratio of the model and measured areas,
+            // and create a pose guess from that.
+            // Note that the x & y coordinates need to be calculated using the pose
+            // of the centroid relative to the synthetic model image's centroid.
+            double zGuess = initPose[2] * sqrt(modelArea/area);
+            centroid3D *= zGuess;
+            initPose[0] = centroid3D.at<float>(0, 0) - centroid3D.at<float>(0, 1);
+            initPose[1] = centroid3D.at<float>(1, 0) - centroid3D.at<float>(1, 1);
+            initPose[2] = zGuess;
+            
+            // Set the intial pose
+            estimate initEst = estimate(initPose, 0, 0);
+            
+            // Add the estimate to the list
+            est.push_back(initEst);
+        }
+    }
+    
+    Mat frame2;
+    frame.copyTo(frame2);
+    for (int m = 0; m < model.size(); m++) {
+        model[m]->draw(frame2, est[m].pose, K, true, model[m]->colour);
+    }
+    imshow("Frame", frame2);
+    prevEst = est;
+    
+    // Uncomment to allow annotation
+    //addMouseHandler("Frame");
     
     // * * * * * * * * * * * * * * * * *
     //   SET UP LOGGER
@@ -89,92 +212,6 @@ int main(int argc, const char * argv[]) {
         for (int m = 0; m < model.size(); m++) log << ";Model " << m;
         log << endl;
     }
-    
-    // * * * * * * * * * * * * * * * * *
-    //   OPEN THE FIRST FRAME
-    // * * * * * * * * * * * * * * * * *
-    
-    Mat frame;
-    String filename = "Trio_1.avi";
-    VideoCapture cap(dataFolder + filename);
-    //VideoCapture cap(0); waitKey(1000);   // Uncomment this line to try live tracking
-    if(!cap.isOpened()) return -1;
-    
-    cap >> frame;
-    imshow("Frame", frame);
-    
-    // * * * * * * * * * * * * * * * * *
-    //   LOCATE THE STARTING POSITIONS
-    // * * * * * * * * * * * * * * * * *
-    //      Assume the objects are
-    //      leaning back at
-    //      ±45 degrees
-    // * * * * * * * * * * * * * * * * *
-    
-    vector<estimate> est, prevEst;
-    
-    // Find the initial pose of each model
-    for (int m = 0; m < model.size(); m++) {
-        
-        // Find the area & centoid of the object in the image
-        Mat segInit = orange::segmentByColour(frame, model[m]->colour);
-        cvtColor(segInit, segInit, CV_BGR2GRAY);
-        threshold(segInit, segInit, 0, 255, CV_THRESH_BINARY);
-        Point centroid = ASM::getCentroid(segInit);
-        double area = ASM::getArea(segInit);
-        
-        // Draw the model at the default position and find the area & cetroid
-        Vec6f initPose = {0, 0, 300, -CV_PI/4, 0, 0};
-        Mat initGuess = Mat::zeros(frame.rows, frame.cols, frame.type());
-        model[m]->draw(initGuess, initPose, K, false);
-        cvtColor(initGuess, initGuess, CV_BGR2GRAY);
-        threshold(initGuess, initGuess, 0, 255, CV_THRESH_BINARY);
-        Point modelCentroid = ASM::getCentroid(initGuess);
-        double modelArea = ASM::getArea(initGuess);
-        
-        // Convert centroids to 3D/homogeneous coordinates
-        Mat centroid2D;
-        hconcat( Mat(centroid), Mat(modelCentroid), centroid2D );
-        vconcat(centroid2D, Mat::ones(1, 2, centroid2D.type()), centroid2D);
-        centroid2D.convertTo(centroid2D, K.type());
-        Mat centroid3D = K.inv() * centroid2D;
-        
-        // Estimate the depth from the ratio of the model and measured areas,
-        // and create a pose guess from that.
-        // Note that the x & y coordinates need to be calculated using the pose
-        // of the centroid relative to the synthetic model image's centroid.
-        double zGuess = initPose[2] * sqrt(modelArea/area);
-        centroid3D *= zGuess;
-        initPose[0] = centroid3D.at<float>(0, 0) - centroid3D.at<float>(0, 1);
-        initPose[1] = centroid3D.at<float>(1, 0) - centroid3D.at<float>(1, 1);
-        initPose[2] = zGuess;
-        
-        // Set the intial pose
-        estimate initEst = estimate(initPose, 0, 0);
-        
-        // Add the estimate to the list
-        est.push_back(initEst);
-    }
-    prevEst = est;
-    
-    // Pause to allow annotation
-    // addMouseHandler("Frame");
-    
-    
-     // Uncomment block to try boxes with initialisation
-    /*
-    Mat frame2;
-    frame.copyTo(frame2);
-    //Vec6f posey = {40, 10, 810, -1.15, 0.18, -0.03}; // Blue_1.avi
-    //Vec6f posey = {60, 35, 800, -1.15, 0.13, -0.01}; // Blue_2.avi
-    Vec6f posey = {70, 0, 770, -1.27, 0.18, -0.02}; // Blue_3.avi
-    //Vec6f posey = {-5, -7.3, 450, -1.02, -0.20, -0.09}; // Yellow_1.avi
-    //Vec6f posey = {0, -24, 670, -1.02, 0.10, 0}; // Yellow_2.avi
-    model[0]->draw(frame2, posey, K, true);
-    est[0].pose = posey;
-    prevEst = est;
-    imshow("Frame", frame2);
-    */
     
     waitKey(0);
     
