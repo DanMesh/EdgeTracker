@@ -237,6 +237,9 @@ int main(int argc, const char * argv[]) {
                 
                 targetPoints.convertTo(targetPoints, CV_32FC1);
                 
+                // Catch error where no points are found
+                if (whiskerModel.cols == 0) break;
+                
                 // Use least squares to match the sampled edges to each other
                 est[m] = lsq::poseEstimateLM(est[m].pose, whiskerModel, targetPoints.t(), K, 2);
                 
@@ -253,15 +256,6 @@ int main(int argc, const char * argv[]) {
             cout << "Iterations = " << iterations << endl;
         }
         
-        // Stop timer and show time
-        auto stop = chrono::system_clock::now();
-        chrono::duration<double> frameTime = stop-start;
-        double time = frameTime.count()*1000.0;
-        cout << "Frame Time = " << time << " ms" << endl << endl;
-        times.push_back(time);
-        if (time > longestTime) longestTime = time;
-        if (LOGGING) log << time;
-        
         // Draw the shapes on the image
         for (int m = 0; m < model.size(); m++) {
             // Measure and report the area error
@@ -277,6 +271,15 @@ int main(int argc, const char * argv[]) {
         }
         imshow("Frame", frame);
         if (LOGGING) log << endl;
+        
+        // Stop timer and show time
+        auto stop = chrono::system_clock::now();
+        chrono::duration<double> frameTime = stop-start;
+        double time = frameTime.count()*1000.0;
+        cout << "Frame Time = " << time << " ms" << endl << endl;
+        times.push_back(time);
+        if (time > longestTime) longestTime = time;
+        if (LOGGING) log << time;
         
         imshow("CannyTest", cannyTest);
         
