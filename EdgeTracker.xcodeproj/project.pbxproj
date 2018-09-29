@@ -15,6 +15,8 @@
 		3794519A213DCAEE00373D25 /* libopencv_imgcodecs.3.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37945199213DCAEE00373D25 /* libopencv_imgcodecs.3.4.2.dylib */; };
 		3794519E213DCD0900373D25 /* libopencv_imgproc.3.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3794519D213DCD0900373D25 /* libopencv_imgproc.3.4.2.dylib */; };
 		379451AA213DD11200373D25 /* asm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379451A8213DD11200373D25 /* asm.cpp */; };
+		37BCB605215FF5310075CB78 /* hashing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BCB602215FF5300075CB78 /* hashing.cpp */; };
+		37BCB606215FF5310075CB78 /* geo_hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BCB604215FF5300075CB78 /* geo_hash.cpp */; };
 		37F89F29213F1DBC008F1E99 /* lsq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F89F25213F1DBC008F1E99 /* lsq.cpp */; };
 		37F89F2A213F1DBC008F1E99 /* models.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F89F26213F1DBC008F1E99 /* models.cpp */; };
 		37F89F2B213F1DBC008F1E99 /* orange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F89F27213F1DBC008F1E99 /* orange.cpp */; };
@@ -44,6 +46,10 @@
 		3794519D213DCD0900373D25 /* libopencv_imgproc.3.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.3.4.2.dylib; path = ../../../../../../../usr/local/Cellar/opencv/3.4.2/lib/libopencv_imgproc.3.4.2.dylib; sourceTree = "<group>"; };
 		379451A8213DD11200373D25 /* asm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = asm.cpp; sourceTree = "<group>"; };
 		379451A9213DD11200373D25 /* asm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = asm.hpp; sourceTree = "<group>"; };
+		37BCB601215FF5300075CB78 /* geo_hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = geo_hash.h; sourceTree = "<group>"; };
+		37BCB602215FF5300075CB78 /* hashing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hashing.cpp; sourceTree = "<group>"; };
+		37BCB603215FF5300075CB78 /* hashing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = hashing.hpp; sourceTree = "<group>"; };
+		37BCB604215FF5300075CB78 /* geo_hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = geo_hash.cpp; sourceTree = "<group>"; };
 		37F89F23213F1DBC008F1E99 /* models.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = models.hpp; sourceTree = "<group>"; };
 		37F89F24213F1DBC008F1E99 /* lsq.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lsq.hpp; sourceTree = "<group>"; };
 		37F89F25213F1DBC008F1E99 /* lsq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lsq.cpp; sourceTree = "<group>"; };
@@ -96,6 +102,10 @@
 				3778237C214073E600A340D0 /* area.hpp */,
 				379451A8213DD11200373D25 /* asm.cpp */,
 				379451A9213DD11200373D25 /* asm.hpp */,
+				37BCB604215FF5300075CB78 /* geo_hash.cpp */,
+				37BCB601215FF5300075CB78 /* geo_hash.h */,
+				37BCB602215FF5300075CB78 /* hashing.cpp */,
+				37BCB603215FF5300075CB78 /* hashing.hpp */,
 				37F89F25213F1DBC008F1E99 /* lsq.cpp */,
 				37F89F24213F1DBC008F1E99 /* lsq.hpp */,
 				3794518A213DC85700373D25 /* main.cpp */,
@@ -165,6 +175,8 @@
 			files = (
 				37F89F29213F1DBC008F1E99 /* lsq.cpp in Sources */,
 				3794518B213DC85700373D25 /* main.cpp in Sources */,
+				37BCB605215FF5310075CB78 /* hashing.cpp in Sources */,
+				37BCB606215FF5310075CB78 /* geo_hash.cpp in Sources */,
 				3778237D214073E600A340D0 /* area.cpp in Sources */,
 				379451AA213DD11200373D25 /* asm.cpp in Sources */,
 				37F89F2A213F1DBC008F1E99 /* models.cpp in Sources */,

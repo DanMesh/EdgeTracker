@@ -14,6 +14,8 @@
 
 #include "area.hpp"
 #include "asm.hpp"
+#include "geo_hash.h"
+#include "hashing.hpp"
 #include "lsq.hpp"
 #include "models.hpp"
 #include "orange.hpp"
@@ -49,6 +51,10 @@ static Mat K = Mat(3,3, CV_32FC1, intrinsicMatrix);
 
 static string dataFolder = "../../../../../data/";
 static string logFolder = "../../../../../logs/";
+
+static int binWidth = 2;
+static int numRotBins = 10;
+static float defaultZ = 500;
 
 static bool LOGGING = false; // Whether to log data to CSV files
 static bool REPORT_ERRORS = true; // Whether to report the area error (slows performance)
@@ -136,6 +142,98 @@ int main(int argc, const char * argv[]) {
                 estimate({190, 50, 970, -1.18, 0.6, 0.24}, 0, 0),
                 estimate({-40, 130, 800, -0.0, 1.2, 1.6}, 0, 0) };
     }
+    
+    // * * * * * * * * * * * * * * * * *
+    //   LOCATE THE STARTING POSITIONS
+    //      USING GEOMETRIC HASHING
+    // * * * * * * * * * * * * * * * * *
+    
+    // HASHING STAGE
+    geo_hash onlyTable = geo_hash(binWidth, numRotBins);
+    
+    // Hash models into the hash table --> the end goal
+    onlyTable = hashing::hashModelsIntoTable(onlyTable, model, K, defaultZ);
+    
+    Mat cannyInit;
+    Canny(frame, cannyInit, 40, 120);
+    dilate(cannyInit, cannyInit, getStructuringElement(CV_SHAPE_CROSS, Size(5,5)));
+    
+    vector<Vec4i> lines = orange::borderLines(cannyInit);
+    vector<Point2f> imgPoints;
+    
+    Mat cannyColour;
+    cvtColor(cannyInit, cannyColour, CV_GRAY2BGR);
+    // Convert the edges to a set of points
+    for (int i = 0; i < lines.size(); i++) {
+        Point p1 = Point(lines[i][0], lines[i][1]);
+        Point p2 = Point(lines[i][2], lines[i][3]);
+        imgPoints.push_back(Point2f(p1));
+        imgPoints.push_back(Point2f(p2));
+        
+        line(cannyColour, p1, p2, Scalar(0,255,0));
+        circle(cannyColour, p1, 1, Scalar(0,0,255));
+        circle(cannyColour, p2, 1, Scalar(0,0,255));
+    }
+    imshow("cannyColour", cannyColour);
+    
+    
+    // GEOMETRIC HASHING RECOGNITION
+    // Check for entries in the hash table
+    VoteTally bestVT[model.size()];
+    vector<estimate> bestEst(model.size());
+    vector<int> bestImgBasis[model.size()];
+    
+    // Try each line as a potential image basis
+    for (int l = 0; l < lines.size(); l++) {
+        vector<int> imgBasis = {2*l, 2*l + 1};
+        vector<VoteTally> vt = hashing::voteWithBasis(onlyTable, imgPoints, imgBasis);
+        
+        // Find the best model basis for each model
+        vector<bool> gotModel(model.size());    // Whether each model has been found for this image basis
+        for (int v = 0; v < vt.size(); v++) {
+            int modelNum = vt[v].mb.model;
+            if (!gotModel[modelNum]) {
+                gotModel[modelNum] = true;
+                if (bestVT[modelNum].votes <= vt[v].votes) {
+                    cout << vt[v].votes;
+                    // Do LSQ to see what the error is
+                    vector<Mat> orderedPoints = hashing::getOrderedPoints2(onlyTable, vt[v].mb, imgBasis, model[modelNum]->getVertices(), imgPoints);
+                    Mat newModel = orderedPoints[0];
+                    Mat newTarget = orderedPoints[1];
+                    
+                    //vconcat(newModel.rowRange(0, 2), newModel.row(3), newModel);
+                    //vconcat(newTarget.t(), Mat::ones(1, newTarget.rows, newTarget.type()), newTarget);
+                    
+                    // Use least squares to estimate pose
+                    estimate est = lsq::poseEstimateLM({0,0,defaultZ,0,0,0}, newModel, newTarget, K);
+                    if (est.error < bestEst[modelNum].error) {
+                        bestEst[modelNum] = est;
+                        bestVT[modelNum] = vt[v];
+                        bestImgBasis[modelNum] = imgBasis;
+                        cout << " *";
+                    }
+                    cout << endl;
+                    model[modelNum]->draw(frame, est.pose, K, true, Scalar(0,0,255));
+                    imshow("output", frame);
+                    waitKey(0);
+                }
+            }
+        }
+    }
+    
+    
+    for (int m = 0; m < model.size(); m++) {
+        if (bestImgBasis[m].empty()) {
+            cout << "Error! Empty image basis!" << endl;
+            continue;
+        }
+        estimate est = bestEst[m];
+        
+        model[m]->draw(frame, est.pose, K, true, Scalar(0,0,255));
+    }
+    imshow("output", frame);
+    waitKey(0);return 12;
+    
     
     // * * * * * * * * * * * * * * * * *
     //   LOCATE THE STARTING POSITIONS
