@@ -233,9 +233,9 @@ int main(int argc, const char * argv[]) {
     vector<vector<double>> errors = vector<vector<double>>(model.size());
     vector<double> worstError = vector<double>(model.size());
     
+    auto start = chrono::system_clock::now();   // Start the timer
+    
     while (!frame.empty()) {
-        
-        auto start = chrono::system_clock::now();   // Start the timer
         
         // Detect edges
         Mat canny, cannyTest;
@@ -299,7 +299,6 @@ int main(int argc, const char * argv[]) {
                 iterations++;
                 //waitKey(0);
             }
-            cout << "Iterations = " << iterations << endl;
         }
         
         // Draw the shapes on the image
@@ -324,6 +323,7 @@ int main(int argc, const char * argv[]) {
         double time = frameTime.count()*1000.0;
         cout << "Frame Time = " << time << " ms" << endl << endl;
         times.push_back(time);
+        start = stop;
         if (time > longestTime) longestTime = time;
         if (LOGGING) log << time;
         
@@ -345,13 +345,14 @@ int main(int argc, const char * argv[]) {
     cout << "Longest time = " << longestTime << " ms     " << 1000.0/longestTime << " fps" << endl;
     
     // Report errors
-    if (!REPORT_ERRORS) return 0;
-    cout << endl << "AREA ERRORS:" << endl << "Model   Mean     StDev    Worst" << endl;
-    for (int m = 0; m < model.size(); m++) {
-        vector<double> meanError, stdDevError;
-        meanStdDev(errors[m], meanError, stdDevError);
-        printf("%4i    %5.2f    %5.2f    %5.2f \n", m, meanError[0], stdDevError[0], worstError[m]);
-        //cout << m << "   " << meanError[0] << "   " << stdDevError[0] << "   " << worstError[m] << endl;
+    if (REPORT_ERRORS) {
+        cout << endl << "AREA ERRORS:" << endl << "Model   Mean     StDev    Worst" << endl;
+        for (int m = 0; m < model.size(); m++) {
+            vector<double> meanError, stdDevError;
+            meanStdDev(errors[m], meanError, stdDevError);
+            printf("%4i    %5.2f    %5.2f    %5.2f \n", m, meanError[0], stdDevError[0], worstError[m]);
+            //cout << m << "   " << meanError[0] << "   " << stdDevError[0] << "   " << worstError[m] << endl;
+        }
     }
     
     if (LOGGING) log.close();
