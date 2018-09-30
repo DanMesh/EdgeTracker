@@ -241,6 +241,34 @@ Mat lsq::jacobianColour(Vec6f pose, Mat points, Mat K, Mat imgHue) {
     return J;
 }
 
+Vec6f lsq::relativePose(Vec6f poseBase, Vec6f poseQuery) {
+    // Returns the pose vector of 'poeQuery' relative to 'poseBase'
+    
+    Mat baseP;
+    hconcat( rotation(poseBase[3], poseBase[4], poseBase[5]) , translation(poseBase[0], poseBase[1], poseBase[2]) , baseP);
+    
+    Mat queryP;
+    hconcat( rotation(poseQuery[3], poseQuery[4], poseQuery[5]) , translation(poseQuery[0], poseQuery[1], poseQuery[2]) , queryP);
+    
+    float bottomRow[4] = {0,0,0,1};
+    Mat bottomRowMat = Mat(1, 4, baseP.type(), bottomRow);
+    vconcat(baseP, bottomRowMat, baseP);
+    vconcat(queryP, bottomRowMat, queryP);
+    
+    //Mat relP = queryP * baseP.inv();
+    Mat relP = baseP.inv() * queryP;
+    
+    // Find the angles (thanks to Gregory Slabaugh)
+    float rY = -asin(relP.at<float>(2,0));
+    float rX = atan2(relP.at<float>(2,1), relP.at<float>(2,2));
+    float rZ = atan2(relP.at<float>(1,0), relP.at<float>(0,0));
+    float tX = relP.at<float>(0,3);
+    float tY = relP.at<float>(1,3);
+    float tZ = relP.at<float>(2,3);
+    
+    return {tX, tY, tZ, rX, rY, rZ};
+}
+
 Vec6f estimate::standardisePose(Vec6f pose) {
     // Ensures all angles are in (-PI,PI]
     for (int i = 3; i < 6; i++) {

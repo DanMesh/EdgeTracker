@@ -60,6 +60,7 @@ public:
     static Mat pointsAsCol(Mat points);
     static Mat jacobian(Vec6f pose, Mat x, Mat K);
     static Mat jacobianColour(Vec6f pose, Mat points, Mat K, Mat imgHue);
+    static Vec6f relativePose(Vec6f poseBase, Vec6f poseQuery);
         
 /*
     CONSTANTS
