@@ -83,6 +83,9 @@ int main(int argc, const char * argv[]) {
     Model * modelRect = new Rectangle(60, 80, Scalar(20, 65, 165));
     Model * modelDog = new Dog(Scalar(19, 89, 64));
     Model * modelArrow = new Arrow(Scalar(108, 79, 28));
+    Model * modelTriangle = new Triangle(Scalar(15, 0, 82));
+    Model * modelDiamond = new Diamond(Scalar(13, 134, 161));
+    Model * modelHouse = new House(Scalar(90, 90, 90));
     Model * modelYellowBox = new Box(175, 210, 49, Scalar(0, 145, 206));    // Yellow box
     Model * modelBrownBox = new Box(204, 257, 70, Scalar(71, 92, 121));     // Brown box
     Model * modelBlueBox = new Box(300, 400, 75, Scalar(180, 83, 40));      // Blue foam box
@@ -100,6 +103,12 @@ int main(int argc, const char * argv[]) {
     }
     else if (filename == "Occlude_1.avi") {
         model = {modelDog};
+    }
+    else if (filename == "Order_1.avi" || filename == "Order_2.avi" || filename == "Order_3.avi") {
+        model = {modelDog, modelArrow, modelTriangle, modelDiamond};
+    }
+    else if (filename == "Order_4.avi" || filename == "Order_5.avi") {
+        model = {modelDog, modelArrow, modelHouse};
     }
     else if (filename == "Blue_1.avi") {
         model = {modelBlueBox};

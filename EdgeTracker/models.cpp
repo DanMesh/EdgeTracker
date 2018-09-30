@@ -258,3 +258,131 @@ void Arrow::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
         }
     }
 }
+
+// * * * * * * * * * * * * * * *
+//      Triangle
+// * * * * * * * * * * * * * * *
+
+Triangle::Triangle(Scalar colourIn) {
+    colour = colourIn;
+    vertices = {
+        Point3f(0, 0, 0), Point3f(65, 65, 0), Point3f(-65, 65, 0)
+    };
+    edgeBasisList = {
+        {0,1}, {1,2}, {2,0},
+        {1,0}, {2,1}, {0,2}
+    };
+};
+
+vector<bool> Triangle::visibilityMask(float xAngle, float yAngle) {
+    return {true, true, true};
+}
+
+void Triangle::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
+    Mat proj = lsq::projection(pose, pointsToMat(), K);
+    
+    // Create a list of points
+    Point points[1][3];
+    for (int i  = 0; i < proj.cols; i++) {
+        Mat col = proj.col(i);
+        points[0][i] = Point(col.at<float>(0), col.at<float>(1));
+    }
+    
+    if (!lines) {
+        const Point* ppt[1] = {points[0]};
+        int npt[] = {3};
+        fillPoly(img, ppt, npt, 1, colour);
+    }
+    else {
+        for (int i = 0; i < edgeBasisList.size()/2; i++) {
+            vector<int> edge = edgeBasisList[i];
+            line(img, points[0][edge[0]], points[0][edge[1]], colour, 1);
+        }
+    }
+}
+
+// * * * * * * * * * * * * * * *
+//      Diamond
+// * * * * * * * * * * * * * * *
+
+Diamond::Diamond(Scalar colourIn) {
+    colour = colourIn;
+    vertices = {
+        Point3f(0, 0, 0), Point3f(-50, -60, 0), Point3f(-30, -85, 0), Point3f(30, -85, 0),
+        Point3f(50, -60, 0)
+    };
+    edgeBasisList = {
+        {0,1}, {1,2}, {2,3}, {3,4}, {4,0},
+        {1,0}, {2,1}, {3,2}, {4,3}, {0,4}
+    };
+};
+
+vector<bool> Diamond::visibilityMask(float xAngle, float yAngle) {
+    return {true, true, true, true, true};
+}
+
+void Diamond::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
+    Mat proj = lsq::projection(pose, pointsToMat(), K);
+    
+    // Create a list of points
+    Point points[1][5];
+    for (int i  = 0; i < proj.cols; i++) {
+        Mat col = proj.col(i);
+        points[0][i] = Point(col.at<float>(0), col.at<float>(1));
+    }
+    
+    if (!lines) {
+        const Point* ppt[1] = {points[0]};
+        int npt[] = {5};
+        fillPoly(img, ppt, npt, 1, colour);
+    }
+    else {
+        for (int i = 0; i < edgeBasisList.size()/2; i++) {
+            vector<int> edge = edgeBasisList[i];
+            line(img, points[0][edge[0]], points[0][edge[1]], colour, 1);
+        }
+    }
+}
+
+// * * * * * * * * * * * * * * *
+//      House
+// * * * * * * * * * * * * * * *
+
+House::House(Scalar colourIn) {
+    colour = colourIn;
+    vertices = {
+        Point3f(0, 0, 0), Point3f(0, -45, 0), Point3f(-15, -45, 0), Point3f(40, -90, 0),
+        Point3f(95, -45, 0), Point3f(80, -45, 0), Point3f(80, 0, 0)
+    };
+    edgeBasisList = {
+        {0,1}, {1,2}, {2,3}, {3,4}, {4,5}, {5,6}, {6,0},
+        {1,0}, {2,1}, {3,2}, {4,3}, {5,4}, {6,5}, {0,6}
+    };
+};
+
+vector<bool> House::visibilityMask(float xAngle, float yAngle) {
+    return {true, true, true, true, true, true, true};
+}
+
+void House::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
+    Mat proj = lsq::projection(pose, pointsToMat(), K);
+    
+    // Create a list of points
+    Point points[1][7];
+    for (int i  = 0; i < proj.cols; i++) {
+        Mat col = proj.col(i);
+        points[0][i] = Point(col.at<float>(0), col.at<float>(1));
+    }
+    
+    if (!lines) {
+        const Point* ppt[1] = {points[0]};
+        int npt[] = {7};
+        fillPoly(img, ppt, npt, 1, colour);
+    }
+    else {
+        for (int i = 0; i < edgeBasisList.size()/2; i++) {
+            vector<int> edge = edgeBasisList[i];
+            line(img, points[0][edge[0]], points[0][edge[1]], colour, 1);
+        }
+    }
+}

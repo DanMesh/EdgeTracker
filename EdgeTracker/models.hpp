@@ -117,6 +117,41 @@ public:
     void draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour);
 };
 
+// * * * * * * * * * * * * * * *
+//      Triangle
+// * * * * * * * * * * * * * * *
+
+class Triangle : public Model {
+public:
+    Triangle(Scalar colourIn);
+    bool vertexIsVisible(int vertexID, float xAngle, float yAngle) {return true;};
+    vector<bool> visibilityMask(float xAngle, float yAngle);
+    void draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour);
+};
+
+// * * * * * * * * * * * * * * *
+//      Diamond
+// * * * * * * * * * * * * * * *
+
+class Diamond : public Model {
+public:
+    Diamond(Scalar colourIn);
+    bool vertexIsVisible(int vertexID, float xAngle, float yAngle) {return true;};
+    vector<bool> visibilityMask(float xAngle, float yAngle);
+    void draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour);
+};
+
+// * * * * * * * * * * * * * * *
+//      House
+// * * * * * * * * * * * * * * *
+
+class House : public Model {
+public:
+    House(Scalar colourIn);
+    bool vertexIsVisible(int vertexID, float xAngle, float yAngle) {return true;};
+    vector<bool> visibilityMask(float xAngle, float yAngle);
+    void draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour);
+};
 
 
 
