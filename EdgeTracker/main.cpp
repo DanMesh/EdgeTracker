@@ -68,7 +68,7 @@ int main(int argc, const char * argv[]) {
     // * * * * * * * * * * * * * * * * *
     
     Mat frame;
-    String filename = "Blue_1.avi";
+    String filename = "Trio_1.avi";
     VideoCapture cap(dataFolder + filename);
     //VideoCapture cap(0); waitKey(1000);   // Uncomment this line to try live tracking
     if(!cap.isOpened()) return -1;
@@ -90,7 +90,6 @@ int main(int argc, const char * argv[]) {
     Model * modelBrownBox = new Box(204, 257, 70, Scalar(71, 92, 121));     // Brown box
     Model * modelBlueBox = new Box(300, 400, 75, Scalar(180, 83, 40));      // Blue foam box
     Model * modelBrownCube = new Box(70, 70, 70, Scalar(35, 55, 90));       // Brown numbers cube
-    Model * modelDogLive = new Dog(Scalar(75, 140, 85));                    // For use in live tracking
 
     vector<Model *> model;
     
@@ -339,7 +338,10 @@ int main(int argc, const char * argv[]) {
         cap.grab();
         cap >> frame;
         
-        if (waitKey(1) == 'q') break;
+        // Only render image every few frames (for speed)
+        if (times.size() % 3 == 0) {
+            if (waitKey(1) == 'q') break;
+        }
     }
     
     vector<double> meanTime, stdDevTime;
