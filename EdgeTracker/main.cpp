@@ -315,7 +315,6 @@ int main(int argc, const char * argv[]) {
             model[m]->draw(frame, est[m].pose, K, true);
         }
         imshow("Frame", frame);
-        if (LOGGING) log << endl;
         
         // Stop timer and show time
         auto stop = chrono::system_clock::now();
@@ -325,9 +324,16 @@ int main(int argc, const char * argv[]) {
         times.push_back(time);
         start = stop;
         if (time > longestTime) longestTime = time;
-        if (LOGGING) log << time;
         
-        imshow("CannyTest", cannyTest);
+        if (LOGGING) {
+            log << time;
+            for (int m = 0; m < model.size(); m++) {
+                log << ";" << errors[m].back();
+            }
+            log << endl;
+        }
+        
+        //imshow("CannyTest", cannyTest);
         
         // Get next frame
         cap.grab();
@@ -356,6 +362,7 @@ int main(int argc, const char * argv[]) {
     }
     
     if (LOGGING) log.close();
+    
     return 0;
 }
 
