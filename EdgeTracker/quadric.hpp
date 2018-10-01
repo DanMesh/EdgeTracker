@@ -11,6 +11,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <stdio.h>
+#include <iostream>
 
 using namespace std;
 using namespace cv;
@@ -39,6 +40,7 @@ public:
     Scalar colour;
     Mat Q, pi;
     vector<bool> pointsBetweenBounds(Mat points);
+    vector<bool> pointsOnModel(Mat points);
     //virtual void draw(Mat img, Vec6f pose, Mat K, Scalar drawColour = Scalar(255, 255, 255)) = 0;
     
 private:

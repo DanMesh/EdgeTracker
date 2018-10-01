@@ -34,10 +34,30 @@ void Quadric::makeBounds(vector<Plane> bounds) {
 vector<bool> Quadric::pointsBetweenBounds(Mat points) {
     // points: 3D column vector coordinates in homogeneous coordinates
     // Returns a vector of booleans indicating true if the corresponding point is in the bounds
-    Mat check = pi.t() * points;
-    vector<bool> ret = {};
-    for (int i = 0; i < check.cols; i++) {
-        ret.push_back(check.at<float>(0, i) >= 0 && check.at<float>(1, i) >= 0);
+    vector<bool> ret(points.cols);
+    if (pi.empty()) {
+        for (int p = 0; p < points.cols; p++) ret[p] = true;
+    }
+    else {
+        Mat check = pi.t() * points;
+        for (int i = 0; i < check.cols; i++) {
+            ret[i] = check.at<float>(0, i) >= 0 && check.at<float>(1, i) >= 0;
+        }
+    }
+    return ret;
+}
+
+vector<bool> Quadric::pointsOnModel(Mat points) {
+    // points: 3D column vector coordinates in homogeneous coordinates
+    // Returns a vector of booleans indicating true if the corresponding point is on the model
+    float THRESHOLD = 0.5;
+    
+    Mat d = points.t() * Q * points;
+    cout << d << endl;
+    vector<bool> inBounds = pointsBetweenBounds(points);
+    vector<bool> ret(points.cols);
+    for (int p = 0; p < points.cols; p++) {
+        if (abs(d.at<float>(p,p)) < THRESHOLD) ret[p] = inBounds[p];
     }
     return ret;
 }
