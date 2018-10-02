@@ -58,16 +58,33 @@ int main(int argc, const char * argv[]) {
     //   TESTING QUADRICS
     // * * * * * * * * * * * * * * * * *
     
-    Plane pl1 = Plane(Point3f(1,1,1), Point3f(0,0,0));
-    Plane pl2 = Plane(Point3f(-1,-1,-1), Point3f(1,1,1));
+    Plane pl1 = Plane(Point3f(1,0,0), Point3f(-6,0,0));
+    Plane pl2 = Plane(Point3f(-1,0,0), Point3f(6,0,0));
     
-    Quadric qu = Quadric(Mat(Point3f(1,1,1)), {pl1, pl2});
+    float Q[4][4] = {
+        {1, 0, 0, 0},
+        {0, 1, 0, 0},
+        {0, 0, 1, -10},
+        {0, 0, -10, 75}
+    };
+    
+    Quadric qu = Quadric(Mat(4, 4, CV_32F, Q), {pl1, pl2});
     
     Mat x;
-    hconcat(Mat(Point3f(-1, -1, -1)), Mat(Point3f(0.5, 0.5, 0.5)), x);
+    hconcat(Mat(Point3f(5, 0, 0)), Mat(Point3f(0, 5, 0)), x);
     vconcat(x, Mat::ones(1, x.cols, x.type()), x);
     vector<bool> betw = qu.pointsBetweenBounds(x);
     cout << betw[0] << " " << betw[1] << endl;
+    vector<bool> onQuad = qu.pointsOnModel(x);
+    cout << onQuad[0] << " " << onQuad[1] << endl;
+    
+    cout << endl << qu.imageFromView().C << endl << endl;
+    
+    Conic circle = Conic::circle(Point2f(0,0), 5);
+    cout << circle.C << endl;
+    hconcat(Mat(Point3f(5, 0, 1)), Mat(Point3f(0, 4.95, 1)), x);
+    vector<bool> onCirc = circle.pointsOnModel(x);
+    cout << onCirc[0] << " " << onCirc[1] << endl;
     
     return 12;
     

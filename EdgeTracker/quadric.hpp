@@ -29,6 +29,24 @@ public:
 
 
 // * * * * * * * * * * * * * * *
+//      Conic
+// * * * * * * * * * * * * * * *
+
+class Conic {
+public:
+    Conic(Mat C_in, Scalar colour_in = Scalar(255,255,255)) : C(C_in), colour(colour_in) {}
+    Mat C;
+    Scalar colour;
+    vector<bool> pointsOnModel(Mat points);
+private:
+    bool isEllipse();
+    
+public:
+    static Conic circle(Point2f centre, float radius, Scalar colour = Scalar(255,255,255));
+};
+
+
+// * * * * * * * * * * * * * * *
 //      Quadric
 // * * * * * * * * * * * * * * *
 
@@ -41,6 +59,7 @@ public:
     Mat Q, pi;
     vector<bool> pointsBetweenBounds(Mat points);
     vector<bool> pointsOnModel(Mat points);
+    Conic imageFromView();
     //virtual void draw(Mat img, Vec6f pose, Mat K, Scalar drawColour = Scalar(255, 255, 255)) = 0;
     
 private:
