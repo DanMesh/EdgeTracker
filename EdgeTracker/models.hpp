@@ -68,6 +68,7 @@ private:
     static const vector<vector<float>> xAngleLimits;
     static const vector<vector<float>> yAngleLimits;
     static const vector<vector<int>> faces;
+    Mat normals, normMag;
     void createPoints(float width, float height, float depth);
 };
 

@@ -74,29 +74,34 @@ bool Box::vertexIsVisible(int vertexID, float xAngle, float yAngle) {
 vector<bool> Box::faceVisibilityMask(Vec6f pose) {
     vector<bool> ret(6);
     
+    // Find normals after rotation
     float normalArr[3][6] = {
         { 0,  0, -1,  0,  1,  0},
         { 0, -1,  0,  0,  0,  1},
         {-1,  0,  0,  1,  0,  0}
     };
     Mat normals = Mat(3, 6, CV_32F, normalArr);
-    Mat n2 = normals.mul(normals);
-    reduce(n2, n2, 0, CV_REDUCE_SUM, CV_32F);
     Mat R = lsq::rotation(pose[3], pose[4], pose[5]);
     normals = R * normals;
+    
+    // Find translation (of centre point)
     float translation[3] = {pose[0], pose[1], pose[2]};
     Mat t = Mat(3, 1, CV_32F, translation);
-    Mat t2 = t.mul(t);
-    reduce(t2, t2, 1, CV_REDUCE_SUM, CV_32F);
-    float magT = sqrt(t2.at<float>(0));
     
     for (int f = 0; f < normals.cols; f++) {
         Mat n = normals.col(f);
+        float magN = normMag.at<float>(f);
+        
+        // Find the translation of the centre of the face
+        Mat t2 = t + n;
+        t2 = t2.mul(t2);
+        reduce(t2, t2, 1, CV_REDUCE_SUM, CV_32F);
+        float magT = sqrt(t2.at<float>(0));
+        
         double dot = t.dot(n);
         
-        float magN = sqrt(n2.at<float>(f));
-        
-        ret[f] = -dot / (magT * magN) > 0.05;
+        // Cosine of the angle between the normal and view (translation) must be +ive
+        ret[f] = -dot / (magT * magN) > 0.01;
     }
     
     return ret;
@@ -136,6 +141,15 @@ void Box::createPoints(float w, float h, float d) {
     Point3f p6 = Point3f( w,  h,  d);
     Point3f p7 = Point3f(-w,  h,  d);
     vertices = {p0, p1, p2, p3, p4, p5, p6, p7};
+    
+    float normalArr[3][6] = {
+        { 0,  0, -w,  0,  w,  0},
+        { 0, -h,  0,  0,  0,  h},
+        {-d,  0,  0,  d,  0,  0}
+    };
+    normals = Mat(3, 6, CV_32F, normalArr) * 1;
+    float normMagArr[6] = {d, h, w, d, w, h};
+    normMag = Mat(1, 6, CV_32F, normMagArr) * 1;
 }
 
 void Box::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
