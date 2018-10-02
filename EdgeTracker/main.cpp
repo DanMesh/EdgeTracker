@@ -97,14 +97,80 @@ int main(int argc, const char * argv[]) {
     //   SELECT MODELS
     // * * * * * * * * * * * * * * * * *
     vector<estimate> est, prevEst;
-    if (filename == "Trio_1.avi" || filename == "Trio_2.avi" || filename == "Trio_3.avi") {
+    if (filename == "Trio_1.avi") {
         model ={modelRect, modelDog, modelArrow};
+        est = { estimate({ 50, -56, 363, -0.89, -0.15, -0.13}, 0, 0),
+                estimate({ 18,  32, 243, -0.92, -0.02, -0.01}, 0, 0),
+                estimate({-69, -29, 324, -0.89, -0.08, -0.05}, 0, 0) };
+    }
+    else if (filename == "Trio_2.avi") {
+        model ={modelRect, modelDog, modelArrow};
+        est = { estimate({ 80,   7, 273, -0.92,  0.02,  0.02}, 0, 0),
+                estimate({-62, -15, 306, -0.92,  0.03,  0.03}, 0, 0),
+                estimate({-34,  14, 270, -0.94,  0.02,  0.03}, 0, 0) };
+    }
+    else if (filename == "Trio_3.avi") {
+        model ={modelRect, modelDog, modelArrow};
+        est = { estimate({-69,   5, 268, -0.93,  0.05,  0.01}, 0, 0),
+                estimate({ 21,  36, 251, -0.89, -0.09, -0.08}, 0, 0),
+                estimate({ 29, -50, 357, -0.88,  0.01,  0.03}, 0, 0) };
+    }
+    else if (filename == "TrioHand_1.avi") {
+        model ={modelRect, modelDog, modelArrow};
+        est = { estimate({125,  43, 360, -0.80,  0.25,  0.05}, 0, 0),
+                estimate({-47,  77, 311, -0.81,  0.11,  0.01}, 0, 0),
+                estimate({ 80, -21, 413, -0.77,  0.14,  0.05}, 0, 0) };
+    }
+    else if (filename == "TrioHand_2.avi") {
+        model ={modelRect, modelDog, modelArrow};
+        est = { estimate({115,  28, 370,  0.16,  0.78,  1.65}, 0, 0),
+                estimate({-56,  60, 322, -0.83,  0.06, -0.08}, 0, 0),
+                estimate({ 58, -35, 430, -0.79,  0.05, -0.03}, 0, 0) };
+    }
+    else if (filename == "TrioHand_3.avi") {
+        model ={modelRect, modelDog, modelArrow};
+        est = { estimate({-30,   0, 393, -0.78,  0.17, -0.02}, 0, 0),
+                estimate({ 48,  69, 328, -0.79,  0.11,  0.03}, 0, 0),
+                estimate({ 94, -26, 422, -0.77,  0.08,  0.00}, 0, 0) };
+    }
+    else if (filename == "TrioHand_4.avi") {
+        model ={modelRect, modelDog, modelArrow};
+        est = { estimate({-14,  -6, 380, -0.85,  0.10,  0.05}, 0, 0),
+                estimate({ 48, -13, 413, -0.81,  0.11,  0.02}, 0, 0),
+                estimate({110,  27, 370, -0.76,  0.10,  0.04}, 0, 0) };
+    }
+    else if (filename == "BrownBox_1.avi") {
+        model ={modelBrownBox};
+        est = { estimate({ 97,  -25, 456, -1.08, -0.27, -0.18}, 0, 0) };
+    }
+    else if (filename == "BrownBox_2.avi") {
+        model ={modelBrownBox};
+        est = { estimate({ 83,  -30, 484, -0.78, -0.40, -0.45}, 0, 0) };
+    }
+    else if (filename == "YellowBox_1.avi") {
+        model ={modelYellowBox};
+        est = { estimate({151,  -40, 590, -0.38,  0.77,  0.93}, 0, 0) };
+    }
+    else if (filename == "YellowBox_2.avi") {
+        model ={modelYellowBox};
+        est = { estimate({ 85,  -40, 635, -0.68,  0.43,  0.35}, 0, 0) };
+    }
+    else if (filename == "YellowBox_3.avi") {
+        model ={modelYellowBox};
+        est = { estimate({102,  -41, 520, -0.62, -0.32, -0.18}, 0, 0) };
     }
     else if (filename == "Occlude_1.avi") {
         model = {modelDog};
     }
-    else if (filename == "Order_1.avi" || filename == "Order_2.avi" || filename == "Order_3.avi") {
+    else if (filename == "Order_1.avi" || filename == "Order_3.avi") {
         model = {modelDog, modelArrow, modelTriangle, modelDiamond};
+    }
+    else if (filename == "Order_2.avi") {
+        model = {modelDog, modelArrow, modelTriangle, modelDiamond};
+        est = { estimate({-117, -29, 383, -0.87, -0.05, -0.01}, 0, 0),
+                estimate({  88,  12, 342, -0.88, -0.05, -0.05}, 0, 0),
+                estimate({  60, -85, 440, -0.89, -0.05, -0.00}, 0, 0),
+                estimate({ -81,  46, 288, -0.92, -0.08,  0.00}, 0, 0) };
     }
     else if (filename == "Order_4.avi" || filename == "Order_5.avi") {
         model = {modelDog, modelArrow, modelHouse};
@@ -310,7 +376,6 @@ int main(int argc, const char * argv[]) {
         auto stop = chrono::system_clock::now();
         chrono::duration<double> frameTime = stop-start;
         double time = frameTime.count()*1000.0;
-        cout << "Frame Time = " << time << " ms" << endl << endl;
         times.push_back(time);
         if (time > longestTime) longestTime = time;
         
