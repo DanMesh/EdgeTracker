@@ -232,9 +232,9 @@ int main(int argc, const char * argv[]) {
     vector<vector<double>> errors = vector<vector<double>>(model.size());
     vector<double> worstError = vector<double>(model.size());
     
-    auto start = chrono::system_clock::now();   // Start the timer
-    
     while (!frame.empty()) {
+        
+        auto start = chrono::system_clock::now();   // Start the timer
         
         // Detect edges
         Mat canny, cannyTest;
@@ -302,16 +302,7 @@ int main(int argc, const char * argv[]) {
         
         // Draw the shapes on the image
         for (int m = 0; m < model.size(); m++) {
-            // Measure and report the area error
-            if (REPORT_ERRORS) {
-                Mat seg = orange::segmentByColour(frame, model[m]->colour);
-                double areaError = area::areaError(est[m].pose, model[m], seg, K);
-                errors[m].push_back(areaError);
-                if (areaError > worstError[m]) worstError[m] = areaError;
-                if (LOGGING) log << ";" << areaError;
-            }
-            
-            model[m]->draw(frame, est[m].pose, K, true);
+             model[m]->draw(frame, est[m].pose, K, true);
         }
         imshow("Frame", frame);
         
@@ -321,9 +312,19 @@ int main(int argc, const char * argv[]) {
         double time = frameTime.count()*1000.0;
         cout << "Frame Time = " << time << " ms" << endl << endl;
         times.push_back(time);
-        start = stop;
         if (time > longestTime) longestTime = time;
         
+        // Measure and report the area errors
+        for (int m = 0; m < model.size(); m++) {
+            if (REPORT_ERRORS) {
+                Mat seg = orange::segmentByColour(frame, model[m]->colour);
+                double areaError = area::areaError(est[m].pose, model[m], seg, K);
+                errors[m].push_back(areaError);
+                if (areaError > worstError[m]) worstError[m] = areaError;
+            }
+        }
+        
+        // Log time and errors
         if (LOGGING) {
             log << time;
             for (int m = 0; m < model.size(); m++) {
@@ -338,10 +339,7 @@ int main(int argc, const char * argv[]) {
         cap.grab();
         cap >> frame;
         
-        // Only render image every few frames (for speed)
-        if (times.size() % 3 == 0) {
-            if (waitKey(1) == 'q') break;
-        }
+        if (waitKey(1) == 'q') break;
     }
     
     vector<double> meanTime, stdDevTime;
