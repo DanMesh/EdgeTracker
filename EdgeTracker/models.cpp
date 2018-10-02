@@ -71,10 +71,54 @@ bool Box::vertexIsVisible(int vertexID, float xAngle, float yAngle) {
     return true;
 }
 
+vector<bool> Box::faceVisibilityMask(Vec6f pose) {
+    vector<bool> ret(6);
+    
+    float normalArr[3][6] = {
+        { 0,  0, -1,  0,  1,  0},
+        { 0, -1,  0,  0,  0,  1},
+        {-1,  0,  0,  1,  0,  0}
+    };
+    Mat normals = Mat(3, 6, CV_32F, normalArr);
+    Mat n2 = normals.mul(normals);
+    reduce(n2, n2, 0, CV_REDUCE_SUM, CV_32F);
+    Mat R = lsq::rotation(pose[3], pose[4], pose[5]);
+    normals = R * normals;
+    float translation[3] = {pose[0], pose[1], pose[2]};
+    Mat t = Mat(3, 1, CV_32F, translation);
+    Mat t2 = t.mul(t);
+    reduce(t2, t2, 1, CV_REDUCE_SUM, CV_32F);
+    float magT = sqrt(t2.at<float>(0));
+    
+    for (int f = 0; f < normals.cols; f++) {
+        Mat n = normals.col(f);
+        double dot = t.dot(n);
+        
+        float magN = sqrt(n2.at<float>(f));
+        
+        ret[f] = -dot / (magT * magN) > 0.05;
+    }
+    
+    return ret;
+}
+
 vector<bool> Box::visibilityMask(float xAngle, float yAngle) {
     vector<bool> mask;
     for (int i = 0; i < 8; i++) {
         mask.push_back(vertexIsVisible(i, xAngle, yAngle));
+    }
+    return mask;
+}
+
+vector<bool> Box::visibilityMask(Vec6f pose) {
+    vector<bool> mask(8);
+    vector<bool> maskFaces = faceVisibilityMask(pose);
+    for (int f = 0; f < 6; f++) {
+        if (maskFaces[f]) {
+            for (int v = 0; v < 4; v++) {
+                mask[ faces[f][v] ] = true;
+            }
+        }
     }
     return mask;
 }
@@ -104,14 +148,13 @@ void Box::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
         points.push_back(Point(col.at<float>(0), col.at<float>(1)));
     }
     
+    vector<bool> faceVis = faceVisibilityMask(pose);
+    
     // Draw the points according to the edge list
     for (int i = 0; i < faces.size(); i++) {
-        vector<int> face = faces[i];
+        if (!faceVis[i]) continue;  // Don't show invisible vertices
         
-        if (!vertexIsVisible(face[0], pose[3], pose[4])) continue; // Don't show invisible vertices
-        if (!vertexIsVisible(face[1], pose[3], pose[4])) continue;
-        if (!vertexIsVisible(face[2], pose[3], pose[4])) continue;
-        if (!vertexIsVisible(face[3], pose[3], pose[4])) continue;
+        vector<int> face = faces[i];
         
         Point pts[1][4] = {
             {points[ face[0] ], points[ face[1] ], points[ face[2] ], points[ face[3] ]}
