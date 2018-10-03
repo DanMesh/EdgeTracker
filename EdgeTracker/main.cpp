@@ -360,10 +360,14 @@ int main(int argc, const char * argv[]) {
     
     vector<double> times = {};
     double longestTime = 0.0;
-    vector<vector<double>> errors = vector<vector<double>>(model.size());
-    vector<double> worstError = vector<double>(model.size());
+    vector<vector<double>> errorArea = vector<vector<double>>(model.size());
+    vector<double> errorAreaWorst = vector<double>(model.size());
     
     while (!frame.empty()) {
+        
+        // Keep original image (for area check)
+        Mat frameOrig;
+        frame.copyTo(frameOrig);
         
         auto start = chrono::system_clock::now();   // Start the timer
         
@@ -450,11 +454,11 @@ int main(int argc, const char * argv[]) {
         // Measure and report the area errors
         for (int m = 0; m < model.size(); m++) {
             if (REPORT_ERRORS) {
-                Mat seg = orange::segmentByColour(frame, model[m]->colour);
+                Mat seg = orange::segmentByColour(frameOrig, model[m]->colour);
                 if (DEBUGGING) imshow("seg " + to_string(m), seg);
                 double areaError = area::areaError(est[m].pose, model[m], seg, K);
-                errors[m].push_back(areaError);
-                if (areaError > worstError[m]) worstError[m] = areaError;
+                errorArea[m].push_back(areaError);
+                if (areaError > errorAreaWorst[m]) errorAreaWorst[m] = areaError;
             }
         }
         
@@ -462,7 +466,7 @@ int main(int argc, const char * argv[]) {
         if (LOGGING) {
             log << time;
             for (int m = 0; m < model.size(); m++) {
-                log << ";" << errors[m].back();
+                log << ";" << errorArea[m].back();
             }
             log << endl;
         }
@@ -489,9 +493,9 @@ int main(int argc, const char * argv[]) {
         cout << endl << "AREA ERRORS:" << endl << "Model   Mean     StDev    Worst" << endl;
         for (int m = 0; m < model.size(); m++) {
             vector<double> meanError, stdDevError;
-            meanStdDev(errors[m], meanError, stdDevError);
-            printf("%4i    %5.2f    %5.2f    %5.2f \n", m, meanError[0], stdDevError[0], worstError[m]);
-            //cout << m << "   " << meanError[0] << "   " << stdDevError[0] << "   " << worstError[m] << endl;
+            meanStdDev(errorArea[m], meanError, stdDevError);
+            printf("%4i    %5.2f    %5.2f    %5.2f \n", m, meanError[0], stdDevError[0], errorAreaWorst[m]);
+            //cout << m << "   " << meanError[0] << "   " << stdDevError[0] << "   " << errorAreaWorst[m] << endl;
         }
     }
     
@@ -523,6 +527,6 @@ string currentDateTime() {
     auto tm = *localtime(&t);
     
     ostringstream oss;
-    oss << put_time(&tm, "%Y.%m.%d_%H.%M.%S");
+    oss << put_time(&tm, "%m.%d_%H.%M");
     return oss.str();
 }
