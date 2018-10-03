@@ -50,6 +50,7 @@ static Mat K = Mat(3,3, CV_32FC1, intrinsicMatrix);
 static string dataFolder = "../../../../../data/";
 static string logFolder = "../../../../../logs/";
 
+static bool DEBUGGING = true; // Whether to show the canny and segmented images
 static bool LOGGING = false; // Whether to log data to CSV files
 static bool REPORT_ERRORS = true; // Whether to report the area error (slows performance)
 static bool USE_LINE_ITER = true; // Whether to use the line iterator technique for the whiskers
@@ -410,6 +411,7 @@ int main(int argc, const char * argv[]) {
         for (int m = 0; m < model.size(); m++) {
             if (REPORT_ERRORS) {
                 Mat seg = orange::segmentByColour(frame, model[m]->colour);
+                if (DEBUGGING) imshow("seg " + to_string(m), seg);
                 double areaError = area::areaError(est[m].pose, model[m], seg, K);
                 errors[m].push_back(areaError);
                 if (areaError > worstError[m]) worstError[m] = areaError;
@@ -425,7 +427,7 @@ int main(int argc, const char * argv[]) {
             log << endl;
         }
         
-        //imshow("CannyTest", cannyTest);
+        if (DEBUGGING) imshow("CannyTest", cannyTest);
         
         // Get next frame
         cap.grab();
