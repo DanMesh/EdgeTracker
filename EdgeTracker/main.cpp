@@ -69,8 +69,8 @@ int main(int argc, const char * argv[]) {
     // * * * * * * * * * * * * * * * * *
     
     Mat frame;
-    String filename = "ArrowDiamond_3.avi";
-    VideoCapture cap(dataFolder + filename);
+    String filename = "NO_Arrow_1";
+    VideoCapture cap(dataFolder + filename + ".avi");
     //VideoCapture cap(0); waitKey(1000);   // Uncomment this line to try live tracking
     if(!cap.isOpened()) return -1;
     
@@ -98,139 +98,179 @@ int main(int argc, const char * argv[]) {
     //   SELECT MODELS
     // * * * * * * * * * * * * * * * * *
     vector<estimate> est, prevEst;
-    if (filename == "Test.avi") {
+    if (filename == "Test") {
         model = {modelArrow, modelDiamond};
     }
-    else if (filename == "Trio_1.avi") {
-        model ={modelRect, modelDog, modelArrow};
-        est = { estimate({ 50, -56, 363, -0.89, -0.15, -0.13}, 0, 0),
-                estimate({ 18,  32, 243, -0.92, -0.02, -0.01}, 0, 0),
-                estimate({-69, -29, 324, -0.89, -0.08, -0.05}, 0, 0) };
+    /*
+     2D TESTING VIDEOS
+     */
+    else if (filename == "NO_Arrow_1") {
+        model ={modelArrow};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
     }
-    else if (filename == "Trio_2.avi") {
-        model ={modelRect, modelDog, modelArrow};
-        est = { estimate({ 80,   7, 273, -0.92,  0.02,  0.02}, 0, 0),
-                estimate({-62, -15, 306, -0.92,  0.03,  0.03}, 0, 0),
-                estimate({-34,  14, 270, -0.94,  0.02,  0.03}, 0, 0) };
+    else if (filename == "NO_Arrow_2") {
+        model ={modelArrow};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
     }
-    else if (filename == "Trio_3.avi") {
-        model ={modelRect, modelDog, modelArrow};
-        est = { estimate({-69,   5, 268, -0.93,  0.05,  0.01}, 0, 0),
-                estimate({ 21,  36, 251, -0.89, -0.09, -0.08}, 0, 0),
-                estimate({ 29, -50, 357, -0.88,  0.01,  0.03}, 0, 0) };
+    else if (filename == "NO_Arrow_3") {
+        model ={modelArrow};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
     }
-    else if (filename == "TrioHand_1.avi") {
+    else if (filename == "NO_Arrow_4") {
+        model ={modelArrow};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Diamond_1") {
+        model ={modelDiamond};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Diamond_2") {
+        model ={modelDiamond};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Diamond_3") {
+        model ={modelDiamond};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Dog_1") {
+        model ={modelDog};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Dog_2") {
+        model ={modelDog};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Dog_3") {
+        model ={modelDog};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Rect_1") {
+        model ={modelRect};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Rect_2") {
+        model ={modelRect};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Rect_3") {
+        model ={modelRect};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    /*
+     3D TESTING VIDEOS
+     */
+    else if (filename == "NO_Blue_1") {
+        model ={modelBlueBox};
+        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Brown_1") {
+        model ={modelBrownBox};
+        est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Brown_2") {
+        model ={modelBrownBox};
+        est = { estimate({-78,   10, 727, -0.99,  0.92,  0.55}, 0, 0) };
+    }
+    else if (filename == "NO_Brown_3") {
+        model ={modelBrownBox};
+        //est = { estimate({-78,   10, 727, -0.99,  0.92,  0.55}, 0, 0) };
+    }
+    else if (filename == "NO_Yellow_1") {
+        model ={modelYellowBox};
+        est = { estimate({151,  -40, 590, -0.38,  0.77,  0.93}, 0, 0) };
+    }
+    else if (filename == "NO_Yellow_2") {
+        model ={modelYellowBox};
+        est = { estimate({ 85,  -40, 635, -0.68,  0.43,  0.35}, 0, 0) };
+    }
+    else if (filename == "NO_Yellow_3") {
+        model ={modelYellowBox};
+        est = { estimate({102,  -41, 520, -0.62, -0.32, -0.18}, 0, 0) };
+    }
+    /*
+        OTHER VIDEOS
+     */
+    else if (filename == "TrioHand_1") {
         model ={modelRect, modelDog, modelArrow};
         est = { estimate({ 95,  43, 360, -0.80,  0.25,  0.05}, 0, 0),
                 estimate({-77,  77, 311, -0.81,  0.11,  0.01}, 0, 0),
                 estimate({ 50, -21, 413, -0.77,  0.14,  0.05}, 0, 0) };
     }
-    else if (filename == "TrioHand_2.avi") {
+    else if (filename == "TrioHand_2") {
         model ={modelRect, modelDog, modelArrow};
         est = { estimate({ 85,  28, 370,  0.16,  0.78,  1.65}, 0, 0),
                 estimate({-86,  60, 322, -0.83,  0.06, -0.08}, 0, 0),
                 estimate({ 28, -35, 430, -0.79,  0.05, -0.03}, 0, 0) };
     }
-    else if (filename == "TrioHand_3.avi") {
+    else if (filename == "TrioHand_3") {
         model ={modelRect, modelDog, modelArrow};
         est = { estimate({-60,   0, 393, -0.78,  0.17, -0.02}, 0, 0),
                 estimate({ 18,  69, 328, -0.79,  0.11,  0.03}, 0, 0),
                 estimate({ 64, -26, 422, -0.77,  0.08,  0.00}, 0, 0) };
     }
-    else if (filename == "TrioHand_4.avi") {
+    else if (filename == "TrioHand_4") {
         model ={modelRect, modelDog, modelArrow};
         est = { estimate({-44,  -6, 380, -0.85,  0.10,  0.05}, 0, 0),
                 estimate({ 18, -13, 413, -0.81,  0.11,  0.02}, 0, 0),
                 estimate({ 80,  27, 370, -0.76,  0.10,  0.04}, 0, 0) };
     }
-    else if (filename == "RectDog_1.avi") {
+    else if (filename == "RectDog_1") {
         model ={modelRect, modelDog};
         est = { estimate({  45,  10, 339, -0.82, -0.01,  0.00}, 0, 0),
                 estimate({ -92,  43, 299, -0.83, -0.04, -0.01}, 0, 0) };
     }
-    else if (filename == "RectDog_2.avi") {
+    else if (filename == "RectDog_2") {
         model ={modelRect, modelDog};
         est = { estimate({  18,  11, 336, -0.67,  0.54,  0.58}, 0, 0),
                 estimate({ -20,  -7, 352, -0.83, -0.03, -0.02}, 0, 0) };
     }
-    else if (filename == "ArrowDiamond_1.avi") {
+    else if (filename == "ArrowDiamond_1") {
         model ={modelArrow, modelDiamond};
         est = { estimate({  56,   6, 339, -0.64,  0.53,  0.53}, 0, 0),
                 estimate({ -77,  38, 294, -0.87, -0.07, -0.05}, 0, 0) };
     }
-    else if (filename == "ArrowDiamond_2.avi") {
+    else if (filename == "ArrowDiamond_2") {
         model ={modelArrow, modelDiamond};
         est = { estimate({  -7, -58, 400,  0.13,  0.82,  1.77}, 0, 0),
                 estimate({ -10, -10, 300, -2.30, -0.08,  0.02}, 0, 0) };
     }
-    else if (filename == "ArrowDiamond_3.avi") {
+    else if (filename == "ArrowDiamond_3") {
         model ={modelArrow, modelDiamond};
         est = { estimate({  14, -61, 411,  0.77, -2.79,  0.38}, 0, 0),
                 estimate({ -30,  41, 297, -0.86,  0.02,  0.04}, 0, 0) };
     }
-    else if (filename == "BrownBox_1.avi") {
-        model ={modelBrownBox};
-        est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
-    }
-    else if (filename == "BrownBox_2.avi") {
-        model ={modelBrownBox};
-        est = { estimate({-78,   10, 727, -0.99,  0.92,  0.55}, 0, 0) };
-    }
-    else if (filename == "BrownBox_BG_1.avi") {
-        model ={modelBrownBox};
-        est = { estimate({ 57,  -25, 456, -1.08, -0.27, -0.18}, 0, 0) };
-    }
-    else if (filename == "BrownBox_BG_2.avi") {
-        model ={modelBrownBox};
-        est = { estimate({ 43,  -30, 484, -0.78, -0.40, -0.45}, 0, 0) };
-    }
-    else if (filename == "BrownBox_BG_3.avi") {
-        model ={modelBrownBox};
-        est = { estimate({ 38,  -16, 490, -0.42,  0.84,  1.01}, 0, 0) };
-    }
-    else if (filename == "YellowBox_1.avi") {
-        model ={modelYellowBox};
-        est = { estimate({151,  -40, 590, -0.38,  0.77,  0.93}, 0, 0) };
-    }
-    else if (filename == "YellowBox_2.avi") {
-        model ={modelYellowBox};
-        est = { estimate({ 85,  -40, 635, -0.68,  0.43,  0.35}, 0, 0) };
-    }
-    else if (filename == "YellowBox_3.avi") {
-        model ={modelYellowBox};
-        est = { estimate({102,  -41, 520, -0.62, -0.32, -0.18}, 0, 0) };
-    }
-    else if (filename == "BlueYellow_1.avi") {
+    
+    else if (filename == "BlueYellow_1") {
         model = {modelBlueBox,modelYellowBox};
         est = { estimate({  41,  26,  800, -0.85,  0.82,  0.53}, 0, 0),
                 estimate({ -42, -38,  776, -0.98, -0.67, -0.40}, 0, 0) };
     }
-    else if (filename == "BlueYellow_2.avi") {
+    else if (filename == "BlueYellow_2") {
         model = {modelBlueBox,modelYellowBox};
         est = { estimate({ -30, -72,  879, -0.70,  0.39,  0.83}, 0, 0),
                 estimate({ 108, 105,  688, -0.25,  1.12,  1.27}, 0, 0) };
     }
-    else if (filename == "BlueYellow_3.avi") {
+    else if (filename == "BlueYellow_3") {
         model = {modelBlueBox,modelYellowBox};
         est = { estimate({  28,  71,  905,  0.34,  1.19,  1.84}, 0, 0),
                 estimate({  22,  46,  776, -1.14, -0.59, -0.30}, 0, 0) };
     }
-    else if (filename == "BlueYellow_5.avi") {
+    else if (filename == "BlueYellow_5") {
         model = {modelBlueBox,modelYellowBox};
         est = { estimate({ 140,  63,  824, -1.17, -0.32, -0.12}, 0, 0),
                 estimate({-195,  84,  802, -1.09, -0.68, -0.31}, 0, 0) };
     }
-    else if (filename == "BlueYellow_7.avi") {
+    else if (filename == "BlueYellow_7") {
         model = {modelBlueBox,modelYellowBox};
         est = { estimate({-147,   6,  779, -1.24, -0.84, -0.25}, 0, 0),
                 estimate({ 266,  15,  765, -1.35, -0.21, -0.04}, 0, 0) };
     }
-    else if (filename == "BlueYellow_8.avi") {
+    else if (filename == "BlueYellow_8") {
         model = {modelBlueBox,modelYellowBox};
         est = { estimate({  18, -95,  798, -0.71, -0.81, -0.31}, 0, 0),
                 estimate({-166,  56,  600, -1.27, -0.68, -0.19}, 0, 0) };
     }
-    else if (filename == "BrownYellow_1.avi") {
+    else if (filename == "BrownYellow_1") {
         model = {modelBrownBox,modelYellowBox};
         est = { estimate({ 25,  -17, 559, -0.73,  0.48,  0.60}, 0, 0),
                 estimate({ 25,  -75, 501, -0.70,  0.52,  0.60}, 0, 0) };
@@ -306,7 +346,7 @@ int main(int argc, const char * argv[]) {
     // * * * * * * * * * * * * * * * * *
     ofstream log;
     if (LOGGING) {
-        log.open(logFolder + currentDateTime() + ".csv");
+        log.open(logFolder + filename + "_" + currentDateTime() + ".csv");
         log << "Time";
         for (int m = 0; m < model.size(); m++) log << ";Model " << m;
         log << endl;
