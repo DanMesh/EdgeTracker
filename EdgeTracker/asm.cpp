@@ -128,10 +128,20 @@ vector<Whisker> ASM::projectToWhiskers(Model * model, Vec6f pose, Mat K) {
         // Get the edge endpoints
         Mat p0 = modelMat.col(edges[i][0]);
         Mat p1 = modelMat.col(edges[i][1]);
-        
-        // Calculate the edge vector and length
         Mat edge = p1 - p0;
-        double length = sqrt(edge.dot(edge));
+        
+        double length;
+        if (model->is3D) {
+            // Find the projection and length of the edge in the image
+            Mat ends;
+            hconcat(p0, p1, ends);
+            Mat endProj = lsq::projection(pose, ends, K);
+            Mat edgeProj = endProj.col(1) - endProj.col(0);
+            length = sqrt(edgeProj.dot(edgeProj));
+        }
+        else {
+            length = sqrt(edge.dot(edge));
+        }
         
         // Divide up the edge
         int numWhiskers = MAX(1, ceil(length/WHISKER_SPACING));
