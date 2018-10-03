@@ -129,22 +129,20 @@ vector<Whisker> ASM::projectToWhiskers(Model * model, Vec6f pose, Mat K) {
         Mat p0 = modelMat.col(edges[i][0]);
         Mat p1 = modelMat.col(edges[i][1]);
         Mat edge = p1 - p0;
+        double length = sqrt(edge.dot(edge));   // The length of the edge on the model
+        double projLength = length;             // The length of the projected edge
         
-        double length;
         if (model->is3D) {
             // Find the projection and length of the edge in the image
             Mat ends;
             hconcat(p0, p1, ends);
             Mat endProj = lsq::projection(pose, ends, K);
             Mat edgeProj = endProj.col(1) - endProj.col(0);
-            length = sqrt(edgeProj.dot(edgeProj));
-        }
-        else {
-            length = sqrt(edge.dot(edge));
+            projLength = sqrt(edgeProj.dot(edgeProj));
         }
         
         // Divide up the edge
-        int numWhiskers = MAX(1, ceil(length/WHISKER_SPACING));
+        int numWhiskers = MAX(1, ceil(projLength/WHISKER_SPACING));
         double spacing = length/(numWhiskers+1);
         
         Mat centres;

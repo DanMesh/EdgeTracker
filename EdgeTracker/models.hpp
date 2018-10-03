@@ -31,7 +31,7 @@ public:
     Mat pointsToMat();
     virtual void draw(Mat img, Vec6f pose, Mat K, bool lines = true, Scalar colour = Scalar(255, 255, 255)) = 0;
     Scalar colour = Scalar(255, 255, 255);
-    static const bool is3D = false;
+    bool is3D;
     
 protected:
     vector<Point3f> vertices;
@@ -58,13 +58,13 @@ public:
             {4,0}, {5,1}, {6,2}, {7,3}
         };
         colour = colourIn;
+        is3D = true;
     }
     bool vertexIsVisible(int vertexID, float xAngle, float yAngle);
     vector<bool> visibilityMask(float xAngle, float yAngle);
     vector<bool> visibilityMask(Vec6f pose);
     vector<bool> faceVisibilityMask(Vec6f pose);
     void draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour);
-    static const bool is3D = true;
     
 private:
     static const vector<vector<float>> xAngleLimits;
@@ -88,6 +88,7 @@ public:
             {1,0}, {2,1}, {3,2}, {0,3}
         };
         colour = colourIn;
+        is3D = false;
     }
     bool vertexIsVisible(int vertexID, float xAngle, float yAngle);
     vector<bool> visibilityMask(float xAngle, float yAngle);

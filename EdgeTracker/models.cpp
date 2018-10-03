@@ -101,7 +101,7 @@ vector<bool> Box::faceVisibilityMask(Vec6f pose) {
         double dot = t.dot(n);
         
         // Cosine of the angle between the normal and view (translation) must be +ive
-        ret[f] = -dot / (magT * magN) > 0.01;
+        ret[f] = -dot / (magT * magN) > 0.03;
     }
     
     return ret;
@@ -243,6 +243,7 @@ Dog::Dog(Scalar colourIn) {
         {0,1}, {1,2}, {2,3}, {3,4}, {4,5}, {5,6}, {6,7}, {7,8}, {8,9}, {9,10}, {10,11}, {11,12}, {12,13}, {13,14}, {14,0},
         {1,0}, {2,1}, {3,2}, {4,3}, {5,4}, {6,5}, {7,6}, {8,7}, {9,8}, {10,9}, {11,10}, {12,11}, {13,12}, {14,13}, {0,14}
     };
+    is3D = false;
 };
 
 vector<bool> Dog::visibilityMask(float xAngle, float yAngle) {
@@ -287,6 +288,7 @@ Arrow::Arrow(Scalar colourIn) {
         {0,1}, {1,2}, {2,3}, {3,4}, {4,5}, {5,6}, {6,0},
         {1,0}, {2,1}, {3,2}, {4,3}, {5,4}, {6,5}, {0,6}
     };
+    is3D = false;
 };
 
 vector<bool> Arrow::visibilityMask(float xAngle, float yAngle) {
@@ -329,6 +331,7 @@ Triangle::Triangle(Scalar colourIn) {
         {0,1}, {1,2}, {2,0},
         {1,0}, {2,1}, {0,2}
     };
+    is3D = false;
 };
 
 vector<bool> Triangle::visibilityMask(float xAngle, float yAngle) {
@@ -372,6 +375,7 @@ Diamond::Diamond(Scalar colourIn) {
         {0,1}, {1,2}, {2,3}, {3,4}, {4,0},
         {1,0}, {2,1}, {3,2}, {4,3}, {0,4}
     };
+    is3D = false;
 };
 
 vector<bool> Diamond::visibilityMask(float xAngle, float yAngle) {
@@ -415,6 +419,7 @@ House::House(Scalar colourIn) {
         {0,1}, {1,2}, {2,3}, {3,4}, {4,5}, {5,6}, {6,0},
         {1,0}, {2,1}, {3,2}, {4,3}, {5,4}, {6,5}, {0,6}
     };
+    is3D = false;
 };
 
 vector<bool> House::visibilityMask(float xAngle, float yAngle) {
