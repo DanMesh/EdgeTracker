@@ -177,15 +177,15 @@ int main(int argc, const char * argv[]) {
     }
     else if (filename == "NO_Yellow_1") {
         model ={modelYellowBox};
-        est = { estimate({151,  -40, 590, -0.38,  0.77,  0.93}, 0, 0) };
+        est = { estimate({320,  -60, 900, -0.38,  0.00,  0.00}, 0, 0) };
     }
     else if (filename == "NO_Yellow_2") {
         model ={modelYellowBox};
-        est = { estimate({ 85,  -40, 635, -0.68,  0.43,  0.35}, 0, 0) };
+        est = { estimate({ 95,  -73, 697, -0.28,  0.65,  0.51}, 0, 0) };
     }
     else if (filename == "NO_Yellow_3") {
         model ={modelYellowBox};
-        est = { estimate({102,  -41, 520, -0.62, -0.32, -0.18}, 0, 0) };
+        est = { estimate({-170,  -63, 705, -0.61,  0.28,  0.06}, 0, 0) };
     }
     /*
         OTHER VIDEOS
@@ -442,7 +442,7 @@ int main(int argc, const char * argv[]) {
         
         // Draw the shapes on the image
         for (int m = 0; m < model.size(); m++) {
-             model[m]->draw(frame, est[m].pose, K, true);
+            model[m]->draw(frame, est[m].pose, K, true);
         }
         imshow("Frame", frame);
         

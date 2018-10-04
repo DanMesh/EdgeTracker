@@ -162,11 +162,11 @@ void Box::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
         points.push_back(Point(col.at<float>(0), col.at<float>(1)));
     }
     
-    vector<bool> faceVis = faceVisibilityMask(pose);
+    //vector<bool> faceVis = faceVisibilityMask(pose);
     
     // Draw the points according to the edge list
     for (int i = 0; i < faces.size(); i++) {
-        if (!faceVis[i]) continue;  // Don't show invisible vertices
+        //if (!faceVis[i]) continue;  // Don't show invisible vertices
         
         vector<int> face = faces[i];
         
