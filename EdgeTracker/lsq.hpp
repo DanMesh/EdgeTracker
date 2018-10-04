@@ -30,8 +30,6 @@ public:
     {
         return (error < e.error);
     }
-    
-private:
     static Vec6f standardisePose(Vec6f pose);
     
 public:

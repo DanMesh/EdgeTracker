@@ -387,7 +387,9 @@ int main(int argc, const char * argv[]) {
         // Find the pose of each model
         for (int m = 0; m < model.size(); m++) {
             // Predict the next pose
-            Vec6f posePrediction = est[m].pose + 0.5 * (est[m].pose - prevEst[m].pose);
+            Vec6f poseVelocity = est[m].pose - prevEst[m].pose;
+            poseVelocity = estimate::standardisePose(poseVelocity);
+            Vec6f posePrediction = est[m].pose + 0.5 * poseVelocity;
             prevEst[m] = est[m];
             est[m].pose = posePrediction;
             
