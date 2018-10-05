@@ -161,7 +161,7 @@ int main(int argc, const char * argv[]) {
      */
     else if (filename == "NO_Blue_1") {
         model ={modelBlueBox};
-        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+        est = { estimate({-47,   -4, 756, -0.77,  0.55,  0.46}, 0, 0) };
     }
     else if (filename == "NO_Brown_1") {
         model ={modelBrownBox};
@@ -173,7 +173,7 @@ int main(int argc, const char * argv[]) {
     }
     else if (filename == "NO_Brown_3") {
         model ={modelBrownBox};
-        //est = { estimate({-78,   10, 727, -0.99,  0.92,  0.55}, 0, 0) };
+        est = { estimate({-257,  -50, 764, -0.80,  0.28,  0.26}, 0, 0) };
     }
     else if (filename == "NO_Yellow_1") {
         model ={modelYellowBox};
@@ -346,9 +346,9 @@ int main(int argc, const char * argv[]) {
     // * * * * * * * * * * * * * * * * *
     ofstream log;
     if (LOGGING) {
-        log.open(logFolder + filename + "_" + currentDateTime() + ".csv");
+        log.open(logFolder + filename + ".csv");
         log << "Time";
-        for (int m = 0; m < model.size(); m++) log << ";Model " << m;
+        for (int m = 0; m < model.size(); m++) log << ";error_Area_ " << m << ";error_LSQ_ " << m << ";tX_ " << m << ";tY_ " << m << ";tZ_ " << m << ";rX_ " << m << ";rY_ " << m << ";rZ_ " << m;
         log << endl;
     }
     
@@ -468,7 +468,8 @@ int main(int argc, const char * argv[]) {
         if (LOGGING) {
             log << time;
             for (int m = 0; m < model.size(); m++) {
-                log << ";" << errorArea[m].back();
+                log << ";" << errorArea[m].back() << ";" << est[m].error;
+                for (int i = 0; i < 6; i++) log << ";" << est[m].pose[i];
             }
             log << endl;
         }
