@@ -88,8 +88,8 @@ int main(int argc, const char * argv[]) {
     Model * modelDiamond = new Diamond(Scalar(13, 134, 161));
     Model * modelHouse = new House(Scalar(90, 90, 90));
     Model * modelYellowBox = new Box(175, 210, 49, Scalar(0, 145, 206));    // Yellow box
-    Model * modelBrownBox = new Box(204, 257, 70, Scalar(71, 92, 121));     // Brown box
-    Model * modelBlueBox = new Box(300, 400, 75, Scalar(180, 83, 40));      // Blue foam box
+    Model * modelBrownBox = new Box(204, 257, 70, Scalar(141, 179, 231));     // Brown box
+    Model * modelBlueBox = new Box(300, 400, 75, Scalar(180, 95, 60));      // Blue foam box
     Model * modelBrownCube = new Box(70, 70, 70, Scalar(35, 55, 90));       // Brown numbers cube
 
     vector<Model *> model;
@@ -118,7 +118,12 @@ int main(int argc, const char * argv[]) {
     }
     else if (filename == "NO_Arrow_4") {
         model ={modelArrow};
-        //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+    }
+    else if (filename == "NO_Arrow_5") {
+        model ={modelArrow};
+    }
+    else if (filename == "NO_Arrow_6") {
+        model ={modelArrow};
     }
     else if (filename == "NO_Diamond_1") {
         model ={modelDiamond};
@@ -163,21 +168,29 @@ int main(int argc, const char * argv[]) {
         model ={modelBlueBox};
         est = { estimate({-47,   -4, 756, -0.77,  0.55,  0.46}, 0, 0) };
     }
+    else if (filename == "NO_Blue_2") {
+        model ={modelBlueBox};
+        est = { estimate({ 12,  -60, 723, -0.92, -0.70, -0.27}, 0, 0) };
+    }
+    else if (filename == "NO_Blue_3") {
+        model ={modelBlueBox};
+        est = { estimate({-59,  -42, 728, -0.79,  0.45,  0.20}, 0, 0) };
+    }
     else if (filename == "NO_Brown_1") {
         model ={modelBrownBox};
-        est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
+        est = { estimate({-67,  -12, 745, -0.80,  0.49,  0.24}, 0, 0) };
     }
     else if (filename == "NO_Brown_2") {
         model ={modelBrownBox};
-        est = { estimate({-78,   10, 727, -0.99,  0.92,  0.55}, 0, 0) };
+        est = { estimate({64,   -48, 730, -0.76,  0.71,  0.27}, 0, 0) };
     }
     else if (filename == "NO_Brown_3") {
         model ={modelBrownBox};
-        est = { estimate({-257,  -50, 764, -0.80,  0.28,  0.26}, 0, 0) };
+        est = { estimate({169,  -49, 740, -0.55, -0.12, -0.23}, 0, 0) };
     }
     else if (filename == "NO_Yellow_1") {
         model ={modelYellowBox};
-        est = { estimate({320,  -60, 900, -0.38,  0.00,  0.00}, 0, 0) };
+        est = { estimate({-49,  -13, 738, -0.73,  0.48,  0.16}, 0, 0) };
     }
     else if (filename == "NO_Yellow_2") {
         model ={modelYellowBox};
