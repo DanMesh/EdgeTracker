@@ -490,7 +490,6 @@ int main(int argc, const char * argv[]) {
         if (DEBUGGING) imshow("CannyTest", cannyTest);
         
         // Get next frame
-        cap.grab();
         cap >> frame;
         
         if (waitKey(1) == 'q') break;
