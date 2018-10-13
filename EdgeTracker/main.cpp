@@ -388,9 +388,10 @@ int main(int argc, const char * argv[]) {
         GaussianBlur(frame, frame, Size(3,3), 1);
         
         // Detect edges
-        Mat canny, cannyTest;
+        Mat canny, canny2, cannyTest;
         Canny(frame, canny, 20, 60);
-        canny.copyTo(cannyTest);
+        canny.copyTo(canny2);
+        cvtColor(canny2, canny2, CV_GRAY2BGR);
         
         // Extract the image edge point coordinates
         Mat edges;
@@ -412,6 +413,8 @@ int main(int argc, const char * argv[]) {
                 // Generate a set of whiskers
                 vector<Whisker> whiskers = ASM::projectToWhiskers(model[m], est[m].pose, K);
                 
+                canny2.copyTo(cannyTest);
+                
                 // Sample along the model edges and find the edges that intersect each whisker
                 Mat targetPoints = Mat(2, 0, CV_32S);
                 Mat whiskerModel = Mat(4, 0, CV_32FC1);
@@ -424,9 +427,9 @@ int main(int argc, const char * argv[]) {
                     hconcat(targetPoints, Mat(closestEdge), targetPoints);
                     
                     //TRACE: Display the whiskers
-                    circle(cannyTest, closestEdge, 3, Scalar(120));
-                    circle(cannyTest, whiskers[w].centre, 3, Scalar(255));
-                    line(cannyTest, closestEdge, whiskers[w].centre, Scalar(150));
+                    circle(cannyTest, closestEdge, 3, Scalar(0,255,0));
+                    circle(cannyTest, whiskers[w].centre, 3, Scalar(0,0,255));
+                    line(cannyTest, closestEdge, whiskers[w].centre, Scalar(150,150,150));
                     
                     //Point endPos = whiskers[w].centre + Point(40*whiskers[w].normal.x, 40*whiskers[w].normal.y);
                     //Point endNeg = whiskers[w].centre - Point(40*whiskers[w].normal.x, 40*whiskers[w].normal.y);
@@ -449,7 +452,7 @@ int main(int argc, const char * argv[]) {
                 if (improvement < 0.01 && iterations > 1) break;
                 
                 iterations++;
-                //waitKey(0);
+                //imshow("CannyTest", cannyTest); waitKey(0);
             }
         }
         
