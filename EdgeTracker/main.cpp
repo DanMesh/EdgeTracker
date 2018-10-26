@@ -69,7 +69,7 @@ int main(int argc, const char * argv[]) {
     // * * * * * * * * * * * * * * * * *
     
     Mat frame;
-    String filename = "NO_Arrow_1";
+    String filename = "C_Blue_6";
     VideoCapture cap(dataFolder + filename + ".avi");
     //VideoCapture cap(0); waitKey(1000);   // Uncomment this line to try live tracking
     if(!cap.isOpened()) return -1;
@@ -99,7 +99,7 @@ int main(int argc, const char * argv[]) {
     // * * * * * * * * * * * * * * * * *
     vector<estimate> est, prevEst;
     if (filename == "Test") {
-        model = {modelArrow, modelDiamond};
+        model = {modelBlueBox};
     }
     /*
      2D TESTING VIDEOS
@@ -161,6 +161,28 @@ int main(int argc, const char * argv[]) {
         model ={modelRect};
         //est = { estimate({-78,    8, 675, -0.83,  0.62,  0.14}, 0, 0) };
     }
+    else if (filename == "2O_ArrowDog" || filename == "2O_O_ArrowDog") {
+        model = {modelArrow, modelDog};
+    }
+    else if (filename == "3O_ArrowDiamondDog_1") {
+        model = {modelArrow};
+        est = { estimate({-58,  -26, 420, -0.89,  0.00,  0.04}, 0, 0)
+                //estimate({-66,   74, 282, -0.93, -0.07, -0.01}, 0, 0)
+                //estimate({ 24,   48, 324, -0.93,  0.03,  0.04}, 0, 0)
+        };
+    }
+    else if (filename == "3O_ArrowDiamondDog_2" || filename == "3O_ArrowDiamondDog_3") {
+        model = {modelArrow};
+    }
+    else if (filename == "4O_ArrowDiamondDogRect_1" || filename == "4O_ArrowDiamondDogRect_2") {
+        model = {modelArrow, modelDiamond, modelDog, modelRect};
+    }
+    else if (filename == "C_Dog_1" || filename == "C_Dog_2" || filename == "O_Dog_1" || filename == "O_Dog_2" || filename == "O_Dog_3") {
+        model ={modelDog};
+    }
+    else if (filename == "C_Arrow_1" || filename == "C_Arrow_2" || filename == "O_Arrow_1") {
+        model ={modelArrow };
+    }
     /*
      3D TESTING VIDEOS
      */
@@ -199,6 +221,67 @@ int main(int argc, const char * argv[]) {
     else if (filename == "NO_Yellow_3") {
         model ={modelYellowBox};
         est = { estimate({-170,  -63, 705, -0.61,  0.28,  0.06}, 0, 0) };
+    }
+    else if (filename == "C_Blue_1") {
+        model ={modelBlueBox};
+        est = { estimate({  28,  -70, 730, -0.73, -0.52, -0.30}, 0, 0) };
+    }
+    else if (filename == "C_Blue_2") {
+        model ={modelBlueBox};
+        est = { estimate({-33,  -45, 605, -0.85,  0.46,  0.20}, 0, 0) };
+    }
+    else if (filename == "C_Blue_3") {
+        model ={modelBlueBox};
+        est = { estimate({ -65,  -18, 603, -0.89, -0.63, -0.16}, 0, 0) };
+    }
+    else if (filename == "C_Blue_4") {
+        model ={modelBlueBox};
+        est = { estimate({-60,  -29, 675, -0.98,  0.40,  0.10}, 0, 0) };
+    }
+    else if (filename == "C_Blue_5") {
+        model ={modelBlueBox};
+        est = { estimate({-28,  -83, 694, -0.76, -0.54, -0.55}, 0, 0) };
+    }
+    else if (filename == "C_Blue_6") {
+        model ={modelBlueBox};
+        est = { estimate({-28,  -28, 640, -0.90,  0.05, -0.11}, 0, 0) };
+    }
+    else if (filename == "O_Blue_1") {
+        model ={modelBlueBox};
+        est = { estimate({-77,  -17, 700, -0.88,  0.55,  0.24}, 0, 0) };
+    }
+    else if (filename == "O_Blue_2") {
+        model ={modelBlueBox};
+        est = { estimate({-00,  -17, 700, -0.88,  0.30,  0.30}, 0, 0) };
+    }
+    else if (filename == "O_Blue_3") {
+        model ={modelBlueBox};
+        est = { estimate({-00,  -17, 700, -0.88, -0.20,  0.20}, 0, 0) };
+    }
+    else if (filename == "O_Blue_4") {
+        model ={modelBlueBox};
+        est = { estimate({-80,   20, 700, -0.88,  0.90,  0.50}, 0, 0) };
+    }
+    else if (filename == "Multi3D_1") {
+        model ={modelBlueBox, modelBrownBox, modelYellowBox};
+        est = { estimate({-175,   42, 830, -1.02, -0.44, -0.21}, 0, 0),
+                estimate({ 139, -132, 996,  0.45,  0.20,  0.11}, 0, 0),
+                estimate({ 271,  111, 789, -0.95,  0.63,  0.44}, 0, 0)
+        };
+    }
+    else if (filename == "Multi3D_2") {
+        model ={modelBlueBox, modelBrownBox, modelYellowBox};
+        est = { estimate({-245,   62, 846, -0.97, -0.66, -0.28}, 0, 0),
+                estimate({   0, -122, 996,  0.45,  0.00,  0.06}, 0, 0),
+                estimate({ 206,  110, 878, -1.05,  0.47,  0.35}, 0, 0)
+        };
+    }
+    else if (filename == "Multi3D_3") {
+        model ={modelBlueBox, modelBrownBox, modelYellowBox};
+        est = { estimate({  90,  -81, 958,  0.05, -0.46,  1.61}, 0, 0),
+                estimate({-186,  122, 773, -1.02, -0.43, -0.30}, 0, 0),
+                estimate({ 188,  157, 792, -0.85,  0.78,  0.57}, 0, 0)
+        };
     }
     /*
         OTHER VIDEOS
