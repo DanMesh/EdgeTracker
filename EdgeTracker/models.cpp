@@ -176,7 +176,7 @@ void Box::draw(Mat img, Vec6f pose, Mat K, bool lines, Scalar colour) {
         const Point* ppt[1] = {pts[0]};
         int npt[] = {4};
         
-        if (lines) polylines(img, ppt, npt, 1, true, colour);
+        if (lines) polylines(img, ppt, npt, 1, true, colour, 2);
         else fillPoly(img, ppt, npt, 1, colour*(1 - i*0.1));
     }
 }

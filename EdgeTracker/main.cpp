@@ -49,6 +49,7 @@ static Mat K = Mat(3,3, CV_32FC1, intrinsicMatrix);
 
 static string dataFolder = "../../../../../data/";
 static string logFolder = "../../../../../logs/";
+static string outFolder = "../../../../../out/";
 
 static bool DEBUGGING = true; // Whether to show the canny and segmented images
 static bool LOGGING = false; // Whether to log data to CSV files
@@ -69,13 +70,33 @@ int main(int argc, const char * argv[]) {
     // * * * * * * * * * * * * * * * * *
     
     Mat frame;
-    String filename = "C_Blue_6";
+    String filename = "C_Blue_5";
     VideoCapture cap(dataFolder + filename + ".avi");
     //VideoCapture cap(0); waitKey(1000);   // Uncomment this line to try live tracking
     if(!cap.isOpened()) return -1;
     
     cap >> frame;
     imshow("Frame", frame);
+    
+    
+    // * * * * * * * * * * * * * * * * *
+    //   CREATE AN OUTPUT VIDEO
+    // * * * * * * * * * * * * * * * * *
+    
+    int ex = static_cast<int>(cap.get(CV_CAP_PROP_FOURCC));     // Input video codec
+    
+    Size S = Size((int) cap.get(CV_CAP_PROP_FRAME_WIDTH), (int) cap.get(CV_CAP_PROP_FRAME_HEIGHT));
+    
+    VideoWriter outputVideo;
+    outputVideo.open(outFolder + filename + "_out.avi", ex, cap.get(CV_CAP_PROP_FPS), S, true);
+    
+    if (!outputVideo.isOpened())
+    {
+        cout  << "Could not open the output video for writing. " << endl;
+        return -1;
+    }
+    
+    
     
     // * * * * * * * * * * * * * * * * *
     //   MODEL CREATION
@@ -575,10 +596,13 @@ int main(int argc, const char * argv[]) {
         
         if (DEBUGGING) imshow("CannyTest", cannyTest);
         
+        // Save frame to output video
+        outputVideo << frame;
+        
         // Get next frame
         cap >> frame;
         
-        int key = waitKey(0);
+        int key = waitKey(1);
         if (key == 'q') break;
         else if (key == 'p') waitKey(0);
     }
