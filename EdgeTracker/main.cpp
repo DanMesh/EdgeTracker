@@ -510,9 +510,9 @@ int main(int argc, const char * argv[]) {
                     hconcat(targetPoints, Mat(closestEdge), targetPoints);
                     
                     //TRACE: Display the whiskers
-                    circle(cannyTest, closestEdge, 3, Scalar(0,255,0));
-                    circle(cannyTest, whiskers[w].centre, 3, Scalar(0,0,255));
-                    line(cannyTest, closestEdge, whiskers[w].centre, Scalar(150,150,150));
+                    line(cannyTest, closestEdge, whiskers[w].centre, Scalar(255,150,0), 2);
+                    circle(cannyTest, closestEdge, 3, Scalar(0,255,0), -1);
+                    circle(cannyTest, whiskers[w].centre, 3, Scalar(0,0,255), -1);
                     
                     //Point endPos = whiskers[w].centre + Point(40*whiskers[w].normal.x, 40*whiskers[w].normal.y);
                     //Point endNeg = whiskers[w].centre - Point(40*whiskers[w].normal.x, 40*whiskers[w].normal.y);
@@ -578,7 +578,9 @@ int main(int argc, const char * argv[]) {
         // Get next frame
         cap >> frame;
         
-        if (waitKey(1) == 'q') break;
+        int key = waitKey(0);
+        if (key == 'q') break;
+        else if (key == 'p') waitKey(0);
     }
     
     vector<double> meanTime, stdDevTime;
